@@ -56,3 +56,8 @@
 .reveal .slides img{
   max-width: 100%;
 }
+
+.reveal code{
+  font-family: monospace;
+  max-height: 20rem;
+}
