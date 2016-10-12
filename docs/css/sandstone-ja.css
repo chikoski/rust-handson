@@ -61,3 +61,7 @@
   font-family: monospace;
   max-height: 20rem;
 }
+
+.reveal li code{
+  padding: 0;
+}
