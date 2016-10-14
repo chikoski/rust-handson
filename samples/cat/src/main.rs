@@ -6,26 +6,40 @@ use std::io::prelude::*;
 use std::fs::File;
 use getopts::Options;
 
-fn run(filename:String, flag_n:bool) -> Result<(String),io::Error>{
-    println!("{}, {}", filename, flag_n);
+fn run(filename:String) -> Result<(String),io::Error>{
     let mut file = try!(File::open(filename));
     let mut content = String::new();
     try!(file.read_to_string(&mut content));
     Ok(content)
 }
 
+fn with_line_number(content:String) -> String{
+    let lines: Vec<String> = 
+        content.split("\n")
+                .filter(|line| line.len() > 0)
+                .enumerate()
+                .map(|(index, line)| 
+                        format!("{}: {}", index + 1, line))
+                .collect();
+    lines.join("\n")
+}
+
 fn start(files: Vec<String>, flag_n:bool){
     for filename in files{
-        match run(filename, flag_n){
+        match run(filename){
             Err(reason) => panic!(reason),
-            Ok(content) => print!("{}", content)
+            Ok(content) => print!("{}", if flag_n {
+                with_line_number(content)
+            }else{
+                content
+            })
         }
     }
 }
 
 fn print_usage(program: &str, options:Options){
     let brief = format!("{} [-n] file [file..]", program);
-    print!("{}", options.usage(&brief));
+    println!("{}", options.usage(&brief));
 }
 
 fn main() {
