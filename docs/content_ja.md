@@ -650,7 +650,7 @@ fn main() {
 ### 発展させてみましょう！
 
 1. 複数のファイルを続けて出力する機能を実装しましょう
-2. -n オプションを実装しましょう (コマンドラインオプションの処理は ```[getopts](https://doc.rust-lang.org/getopts/getopts/index.html)``` を利用するとよいでしょう)
+2. -n オプションを実装しましょう (コマンドラインオプションの処理は [```getopts```](https://doc.rust-lang.org/getopts/getopts/index.html) を利用するとよいでしょう)
 
 ---
 
