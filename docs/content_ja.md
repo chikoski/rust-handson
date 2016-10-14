@@ -8,12 +8,13 @@ Mozilla Japan
 
 ## 今日のゴール
 
-* Rust っていい言語だなーと思ってもらうこと：）
+* Rust っていい言語だなーと思ってもらうこと
 * トピック
    * 基本的な構文
    * owenership と borrowing
    * ユーザー定義型（struct, enum, trait）
-   * 並列処理（メッセージパッシングと共有メモリー） 
+   * 並列処理（メッセージパッシングと共有メモリー）
+* 最終的には簡単な [cat コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230725/)と、同じく簡単な [grep コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230786/)を実装します     
 
 ---
 
@@ -36,9 +37,9 @@ Mozilla Japan
 
 * 安全で、効率的なシステムプログラミングを！
 * 特徴
+    * 手続き、抽象データ型、クロージャー
     * 静的型づけ、型推論
     * 安全なポインター操作（ownership、move semantics、borrowing）
-    * 抽象データ型
     * 並列計算（メッセージパッシング、共有メモリ）
 
 ----
@@ -105,7 +106,6 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 
 * Mac / Linux の場合： [rustup](https://www.rustup.rs/) を利用してインストールします
 * Windows の場合：[インストーラーをダウンロード](https://www.rust-lang.org/en-US/downloads.html)して、インストールします
-
 
 ----
 
@@ -199,7 +199,7 @@ fn main(){
 }
 ~~~
 
-* [コンパイルエラー](ttps://is.gd/kieuKz)になります
+* [コンパイルエラー](https://is.gd/kieuKz)になります
 * let 文で宣言された変数は変更できません
 
 ----
@@ -334,4 +334,370 @@ println!("配列 a の長さ: {}", a.len());
 
 * len() メソッドを呼ぶことで、配列の要素数を取得できます
 * [デモ](https://is.gd/gCsQPu)
+
+---
+
+## スライス
+
+~~~rust
+let a = [0, 1, 2, 3, 4, 5];
+let middle = &a[1..4];
+println!("a.len() = {}", a.len());
+println!("middle.len() = {}", middle.len());
+~~~
+
+* 配列中のある範囲を表す型
+* ~&配列名[開始インデックス..終了インデックス]~と記述する
+* [デモ](https://is.gd/TBB3nY)
+
+---
+
+## タプル
+
+~~~rust
+let x = (1, "hello"); // x: (i32, &str)
+let mut p1 = (1, 2); // p1: (i32, i32)
+let p2 = (3, 4); // p2: (i32, i32)
+p1 = p2;
+~~~
+
+* 値の組みです
+* 型と要素数が同じなら、代入できます 
+
+----
+
+### 要素へのアクセス
+
+~~~rust
+let p = (1, 2, 3);
+let (x, y, z) = p;
+let x = p.0;
+let y = p.1;
+let z = p.2;
+~~~
+
+* 分割代入をするか、インデックスを利用して要素へアクセスします
+
+---
+
+## 制御構造
+
+|制御構造|文 / 式|
+|------|--|
+|条件分岐|if, match|
+|繰り返し|for, loop, while|
+
+* Rust の制御構文は式です（文ではありません）
+
+---
+
+## 条件分岐
+
+~~~rust
+let x = 5;
+if x > 10 {
+  println!("x > 10")
+}else if x > 0{
+  println!("x < x <= 10)  
+}else{
+  println!("x < 0")
+};
+~~~
+
+* 条件節を小括弧で囲む必要はありません
+* [デモ](https://is.gd/eA6B4C)
+
+----
+
+### if 式
+
+~~~rust
+let x = 5;
+let y = if x > 0{
+  1
+}else{ 
+  0
+};
+println!("y = {}", y);   
+~~~
+
+* 最後に評価した式の値が評価値となります
+* ; を入れると、その後に空文があるという解釈になります
+* [デモ](https://is.gd/u7ReVY)
+
+---
+
+## loop 文
+
+~~~rust
+let i = 0;
+loop{
+    println!("{} 回目の出力です", i);
+    let i = i + 1;
+    if i > 10{
+        break;
+    }     
+}
+~~~
+
+* 無限ループを記述できます
+* [デモ](https://is.gd/eWDb0V)
+
+
+----
+
+## while 文
+
+~~~rust
+let mut x = 5; // mut x: i32
+let mut done = false; // mut done: bool
+
+while !done {
+    x += x - 3;
+    println!("{}", x);
+    if x % 5 == 0 {
+        done = true;
+    }
+}
+~~~
+
+---
+
+## for 文
+
+~~~ rust
+for x in 0..10 {
+    println!("{}", x); // x: i32
+}
+~~~
+
+* `0..10` は整数の範囲を表すオブジェクトのリテラル
+
+----
+
+### enumerate 関数
+
+~~~ rust
+for (index, value) in (0..10).enumerate() {
+    println!("index = {}, value = {}", index, value);
+}
+~~~
+
+* enumerate 関数を使うと、繰り返した回数も取得できます
+* タプルが帰ってきます
+
+---
+
+## ベクター
+
+~~~rust
+let v = vec![1, 2, 3, 4, 5];
+let zeroes = vec![0; 10];
+for i in (0..v.len()){
+    println!("v[{}] = {}", i, v[i]);
+} 
+~~~
+
+* 可変長の配列（リスト）です
+* vec! マクロで作成します
+* 詳細は [Vec<T>](https://doc.rust-lang.org/stable/std/vec/) を参照してください
+* [デモ](https://is.gd/XDOd0T)
+
+----
+
+### イテレーターを利用した繰り返し
+
+~~~rust
+let v = vec![1, 2, 3, 4, 5];
+for (index, value) in v.iter().enumerate() {
+    println!("v[{}] = {}", i, v[i]);
+} 
+~~~
+
+* iter メソッドで、ベクターをイテレーターに変換できます
+* [デモ](https://is.gd/C6dys6)
+
+----
+
+### filter / map
+
+~~~rust
+let v = vec![1, 2, 3, 4, 5];
+let result = v.iter().filter(|&n| n % 2 != 0).map(|n| n + 1);
+for (index, value) in result.enumerate() {
+    println!("result[{}]:{}", index, value);
+}
+~~~
+
+* イテレーターは filter や map メソッドを持っています
+* [デモ](https://is.gd/fzmX9R)
+
+---
+
+## もくもくタイム：フィボナッチ数列
+
+* [フィボナッチ数](https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%9C%E3%83%8A%E3%83%83%E3%83%81%E6%95%B0)を計算する関数 `fib` を実装してみましょう
+* [テンプレートはこちら](https://is.gd/7mKTCt) 
+
+---
+
+## Ownership
+
+---
+
+## パターンマッチ
+
+---
+
+## cat コマンドを作ろう
+
+~~~sh
+% cat -n fileA fileB
+~~~
+
+* 指定されたファイルを標準出力へ出力するコマンドです
+* 2つ以上のファイルが指定された場合は、それらを連続して出力します
+* -n オプションがつけられたら、各行に行番号をつけて出力します
+
+----
+
+### テンプレートの作成
+
+~~~sh
+% cargo new --bin cat
+~~~
+
+* Cargo コマンドで、ファイルの雛形が作成されます
+
+----
+
+### ビルドと実行
+
+~~~sh
+% cd cat
+% cargo run
+   Compiling cat v0.1.0
+    Finished debug [unoptimized + debuginfo] target(s) in 1.45 secs
+     Running `target/debug/helloworld`
+Hello, world!
+~~~
+
+* ```cargo run```でビルドと実行を行います
+* ビルドのみ行うなら、build オプションを利用します
+
+----
+
+### コマンドライン引数の取得
+
+~~~rust
+use std::env;
+
+fn main() {
+    let args:Vec<String> = env::args().collect();
+
+    if args.len() > 1{
+        println!("{}", args[1]);
+    }
+}
+~~~
+
+* ```[std::env::args](https://doc.rust-lang.org/std/env/fn.args.html)``` で引数をイテレーターとして取得できます
+* collect メソッドで、イテレーターをベクターに変換しています
+* 0 番目の要素は、実行されるコマンドの名前となっています
+
+----
+
+### ファイルの読み込み
+
+~~~rust
+use std::env;
+use std::io;
+use std::io::prelude::*;
+use std::fs::File;
+
+fn read_file(filename:String) -> Result<String, io::Error>{
+    let mut file = try!(File::open(filename));
+    let mut content = String::new();
+    try!(file.read_to_string(&mut content));
+    Ok(content)
+}
+~~~
+
+* ```File::open```で作られた ```File``` オブジェクトを利用してファイルにアクセスします
+* ファイルアクセスは失敗することもあるので、Result 型が返るようにメソッドを定義します
+
+----
+
+### 読み込んだファイルの出力
+
+~~~rust
+fn main() {
+    let args:Vec<String> = env::args().collect();
+
+    if args.len() > 1{
+        println!("{}", match read_file(args[1].clone()){
+            Ok(content) => content,
+            Err(reason) => panic!(reason) 
+        });
+    }
+}
+~~~
+
+* 成功 / 失敗の判断をパターンマッチを使って行なっています
+
+----
+
+### 発展させてみましょう！
+
+1. 複数のファイルを続けて出力する機能を実装しましょう
+2. -n オプションを実装しましょう (コマンドラインオプションの処理は ```[getopts](https://doc.rust-lang.org/getopts/getopts/index.html)``` を利用するとよいでしょう)
+
+---
+
+## grep コマンドの実装
+
+~~~sh
+% grep patterns grep.txt
+     match one or more patterns.  By default, a pattern matches an input line
+     Each input line that matches at least one of the patterns is written to
+     grep is used for simple patterns and basic regular expressions (BREs);
+     grep and egrep, but can only handle fixed patterns (i.e. it does not% grep hello
+~~~      
+
+* cat コマンドをベースに grep コマンドを実装しましょう！
+* grep は指定された文字列が含まれる行を、ファイルから抜き出します
+
+----
+
+### 正規表現の利用（準備）
+
+~~~
+[dependencies]
+regex = "0.1"
+~~~
+
+* Rust の正規表現機能は、ライブラリとして提供されています
+* 上記のように regex を Cargo.toml の dependencies へと追加することで、正規表現を利用できるようになります
+
+----
+
+###　正規表現の利用
+
+~~~rust
+extern crate regex;
+use regex::Regex;
+
+//　中略
+
+let re = Regex::new(r"[Hh][Ee][Ll][Ll][Oo]").unwrap();
+re.is_match("HeLLo, world"); // true
+~~~
+
+* 調査したいパターンから、regex::Regex オブジェクトを作成します
+* is_match メソッドで、マッチするかどうかを調査できます
+* 詳しくは[こちら](https://doc.rust-lang.org/regex/regex/index.html)
+
+---
+
+## Have fun!
 
