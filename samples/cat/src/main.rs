@@ -1,11 +1,25 @@
 extern crate getopts;
 
 use std::env;
+use std::io;
+use std::io::prelude::*;
+use std::fs::File;
 use getopts::Options;
 
-fn start(files: &Vec<String>, flag_n:bool){
+fn run(filename:String, flag_n:bool) -> Result<(String),io::Error>{
+    println!("{}, {}", filename, flag_n);
+    let mut file = try!(File::open(filename));
+    let mut content = String::new();
+    try!(file.read_to_string(&mut content));
+    Ok(content)
+}
+
+fn start(files: Vec<String>, flag_n:bool){
     for filename in files{
-        println!("{}", filename);
+        match run(filename, flag_n){
+            Err(reason) => panic!(reason),
+            Ok(content) => print!("{}", content)
+        }
     }
 }
 
@@ -33,5 +47,5 @@ fn main() {
         return;
     }
 
-    start(&options.free, flag_n);
+    start(options.free, flag_n);
 }
