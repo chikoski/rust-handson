@@ -535,6 +535,22 @@ for (index, value) in result.enumerate() {
 * [フィボナッチ数](https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%9C%E3%83%8A%E3%83%83%E3%83%81%E6%95%B0)を計算する関数 `fib` を実装してみましょう
 * [テンプレートはこちら](https://is.gd/7mKTCt) 
 
+----
+
+### ナイーブに JS で実装した例
+
+~~~javascript
+function fib(n){
+  if(n == 0){
+    return 0;
+  }else if(n == 1){
+    return 1;
+  }else{
+    return fib(n - 1) + fib(n - 2);
+  }
+}
+~~~
+
 ---
 
 ## 所有権と move セマンティックス
