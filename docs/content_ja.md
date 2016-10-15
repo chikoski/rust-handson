@@ -903,5 +903,21 @@ re.is_match("HeLLo, world"); // true
 
 ---
 
+### 工夫できそうなこと
+
+* 文字列が含まれない行の抜き出し
+* 与えられた正規表現でのマッチ
+* 並列化による高速化
+* etc
+
+---
+
 ## Have fun!
 
+* 今回対象としなかったテーマ
+    * ユーザー定義型（Struct / Enum）
+    * ジェネリクス
+    * trait, create, モジュール
+    * キャスト
+    * ライフタイム
+* プルリクお待ちしています！[https://github.com/chikoski/rust-handson](https://github.com/chikoski/rust-handson) 
