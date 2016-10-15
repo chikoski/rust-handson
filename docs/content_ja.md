@@ -123,7 +123,7 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 ## Hello World
 
 ~~~rust
-fn main(){
+fn main() {
     println!("Hello, world!");
 }
 ~~~
@@ -136,7 +136,7 @@ fn main(){
 ### main 関数
 
 ~~~rust
-fn main(){
+fn main() {
     println!("Hello, world!");
 }
 ~~~
@@ -149,7 +149,7 @@ fn main(){
 ### println!
 
 ~~~rust
-fn main(){
+fn main() {
     println!("Hello, world!");
 }
 ~~~
@@ -162,7 +162,7 @@ fn main(){
 ## 変数
 
 ~~~rust
-fn main(){
+fn main() {
     let name = "Chiko";
     println!("Hello, {}", name);
 }
@@ -177,7 +177,7 @@ fn main(){
 ### 変数の束縛
 
 ~~~rust
-fn main(){
+fn main() {
     let name = "Chiko";
     println!("Hello, {}", name);
 }
@@ -191,7 +191,7 @@ fn main(){
 ### 再代入は原則できません
 
 ~~~rust
-fn main(){
+fn main() {
     let name = "Chiko";
     println!("Hello, {}", name);
     name = "Shimizu";
@@ -207,7 +207,7 @@ fn main(){
 ### 再び束縛する
 
 ~~~rust
-fn main(){
+fn main() {
     let name = "Chiko";
     println!("Hello, {}", name);
     let name = "Shimizu";
@@ -223,11 +223,11 @@ fn main(){
 ### 変更可能な変数
 
 ~~~rust
-fn main(){
+fn main() {
     let mut name = "Chiko";
     println!("Hello, {}", name);
     name = "Shimizu";
-    println!("Hello, {}", name);   
+    println!("Hello, {}", name);
 }
 ~~~
 
@@ -239,13 +239,13 @@ fn main(){
 ### 関数宣言
 
 ~~~rust
-fn add(a:i32, b:i32) -> i32{
+fn add(a: i32, b: i32) -> i32 {
     a + b
 }
 
-fn main(){
+fn main() {
     println!("1 + 1 = {}", add(1, 1));
-    println!("13 + 23 = {}", add(13, 23));   
+    println!("13 + 23 = {}", add(13, 23));
 }
 ~~~
 
@@ -257,9 +257,9 @@ fn main(){
 ### 変数に対する型アノテーション
 
 ~~~rust
-fn add(a:i32, b:i32) -> i32{
+fn add(a: i32, b: i32) -> i32 {
     let answer: i32;
-    answer =  a + b;
+    answer = a + b;
     answer
 }
 ~~~
@@ -272,10 +272,10 @@ fn add(a:i32, b:i32) -> i32{
 ### 返り値
 
 ~~~rust
-fn add(a:i32, b:i32) -> i32{
+fn add(a: i32, b: i32) -> i32 {
     a + b
 }
-fn another_add(a:i32, b:i32) -> i32{
+fn another_add(a: i32, b: i32) -> i32 {
     return a + b;
 }
 ~~~
@@ -396,11 +396,11 @@ let z = p.2;
 ~~~rust
 let x = 5;
 if x > 10 {
-  println!("x > 10")
-}else if x > 0{
-  println!("x < x <= 10")  
-}else{
-  println!("x < 0")
+    println!("x > 10")
+} else if x > 0 {
+    println!("x < x <= 10")
+} else {
+    println!("x < 0")
 };
 ~~~
 
@@ -413,10 +413,10 @@ if x > 10 {
 
 ~~~rust
 let x = 5;
-let y = if x > 0{
-  1
-}else{ 
-  0
+let y = if x > 0 {
+    1
+} else {
+    0
 };
 println!("y = {}", y);   
 ~~~
@@ -431,10 +431,10 @@ println!("y = {}", y);
 
 ~~~rust
 let mut i = 0;
-loop{
+loop {
     i = i +1;
     println!("{} 回目の出力です", i);
-    if i > 9{
+    if i > 9 {
        break;
     }
 }
@@ -494,9 +494,9 @@ for (index, value) in (0..10).enumerate() {
 ~~~rust
 let v = vec![1, 2, 3, 4, 5];
 let zeroes = vec![0; 10];
-for i in (0..v.len()){
+for i in 0..v.len() {
     println!("v[{}] = {}", i, v[i]);
-} 
+}
 ~~~
 
 * 可変長の配列（リスト）です
@@ -511,8 +511,8 @@ for i in (0..v.len()){
 ~~~rust
 let v = vec![1, 2, 3, 4, 5];
 for (index, value) in v.iter().enumerate() {
-    println!("v[{}] = {}", i, v[i]);
-} 
+    println!("v[{}] = {}", index, value);
+}
 ~~~
 
 * iter メソッドで、ベクターをイテレーターに変換できます
@@ -577,16 +577,16 @@ println!("x = {}", x);
 ### 関数呼び出しと所有権　
 
 ~~~rust
-fn sum_vec(memo:Vec<i32>)->i32{}
+fn func(n: u32, memo: Vec<u32>) -> u32 {}
 
 fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}",sum_vec(v));
-    println!("sum = {}",sum_vec(v));    
-}  
+    let mut memo = vec![0, 1];
+    func(0, memo);
+    func(1, memo);
+}
 ~~~
 
-* ビルドエラーとなります（[デモ](https://is.gd/DocyHD))
+* ビルドエラーとなります
 * 一度目の関数呼び出しで、所有権が移動してしまうためです
 
 ----
@@ -594,83 +594,31 @@ fn main() {
 ### 所有権を返すように変更すれば OK
 
 ~~~rust
-fn sum_vec(memo:Vec<i32>)->(i32, Vec<i32>){}
+fn func(n: u32, memo: Vec<u32>) -> (u32, Vec<u32>) {}
 
-fn main(){
-    let v = vec![1, 2, 3];
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);   
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);    
-} 
+fn main() {
+    let mut memo = vec![0, 1];
+    let (answer, memo) = func(0, memo);
+    let (answer, memo) = func(1, memo);
+}
 ~~~
 
 * 所有権を返り値として返せば、ビルドエラーがおきません
-* タプルを使えば、複数の値をまとめて返せます（[デモ](https://is.gd/eSwwXR))
+* タプルを使えば、複数の値をまとめて返せます
+
+---
+
+### もくもく：ビルドできるように修正してください！
+
+* [こちらのコード](https://is.gd/T3bAdc)をビルドできるように修正してください
 
 ---
 
 ## 参照
 
 ~~~rust
-fn sum_vec(memo: &Vec<i32>)->i32{}
-
-fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}", sum_vec(&v));
-    println!("sum = {}", sum_vec(&v));    
-}
 ~~~
 
-* ```&``` をつけることで、値への参照を取得できます（[デモ](https://is.gd/bJhCDQ))
-* ```&型名```で、「その型への参照である」というアノテーションができます
-* 参照を使うことで、値の貸し借りが行えます（borrowing）
-* 関数呼び出しが終わると、所有権は自動的に元の所有者に戻ります
-
-----
-
-### 参照と変更可能性
-
-~~~rust
-fn foo(v: &Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let v = vec![];
-    foo(&v);
-}    
-~~~
-
-* 参照している値の変更はできません
-* ビルドエラーになります([デモ](https://is.gd/f8vsR1))
-
-----
-
-### 変更可能な参照
-
-~~~rust
-fn foo(v: &mut Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let mut v = vec![];
-    println!("v.len() = {}", v.len());
-    foo(&mut v);
-    println!("v.len() = {}", v.len());    
-} 
-~~~
-
-* ```&mut``` で変更可能な参照を取得できます
-* ただし変更可能なオブジェクトに限ります
-
-----
-
-### 貸し借りのルール
-
-* 参照専用の参照 (```&```) は複数作れます
-* 変更可能な参照（```&mut```）は、1 つしか作れません
-    * 状態を変化させられるのは、常に一人
-    * 並列処理時の競合を避けるため
 
 ---
 
@@ -726,9 +674,9 @@ Hello, world!
 use std::env;
 
 fn main() {
-    let args:Vec<String> = env::args().collect();
+    let args: Vec<String> = env::args().collect();
 
-    if args.len() > 1{
+    if args.len() > 1 {
         println!("{}", args[1]);
     }
 }
@@ -748,7 +696,7 @@ use std::io;
 use std::io::prelude::*;
 use std::fs::File;
 
-fn read_file(filename:String) -> Result<String, io::Error>{
+fn read_file(filename: String) -> Result<String, io::Error> {
     let mut file = try!(File::open(filename));
     let mut content = String::new();
     try!(file.read_to_string(&mut content));
@@ -765,10 +713,10 @@ fn read_file(filename:String) -> Result<String, io::Error>{
 
 ~~~rust
 fn main() {
-    let args:Vec<String> = env::args().collect();
+    let args: Vec<String> = env::args().collect();
 
-    if args.len() > 1{
-        println!("{}", match read_file(args[1].clone()){
+    if args.len() > 1 {
+        println!("{}", match read_file(args[1].clone()) {
             Ok(content) => content,
             Err(reason) => panic!(reason) 
         });
