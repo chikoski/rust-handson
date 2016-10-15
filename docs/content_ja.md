@@ -128,7 +128,7 @@ fn main() {
 }
 ~~~
 
-* [こちらで実行できます](https://is.gd/w9hWRA)
+* [こちらで実行できます](https://is.gd/ziTaNb)
 * 一から書きたい場合は [こちら](https://is.gd/LR2nNa)
 
 ----
@@ -199,7 +199,7 @@ fn main() {
 }
 ~~~
 
-* [コンパイルエラー](https://is.gd/kieuKz)になります
+* [コンパイルエラー](https://is.gd/8hMGi3)になります
 * let 文で宣言された変数は変更できません
 
 ----
@@ -215,7 +215,7 @@ fn main() {
 }
 ~~~
 
-* これは[コンパイルエラーが起きません](https://is.gd/m79jCx)
+* これは[コンパイルエラーが起きません](https://is.gd/7q7FR6)
 * 束縛を作り直しています（代入ではないことに注意）
 
 ----
@@ -232,7 +232,7 @@ fn main() {
 ~~~
 
 * mut 修飾子をつけると、変更可能な変数が宣言されます
-* [デモページ](https://is.gd/hx0FuE)
+* [デモページ](https://is.gd/ueP22s)
 
 ---
 
@@ -250,7 +250,7 @@ fn main() {
 ~~~
 
 * 引数と返り値の型を明示します
-* [動作例](https://is.gd/JPFez0)
+* [動作例](https://is.gd/QKyoci)
 
 ----
 
@@ -321,7 +321,7 @@ println!("2番目の要素: {}", a[2]);
 
 * 添え字で、個々の要素へアクセスします
 * 先頭の添え字は 0 です
-* [デモ](https://is.gd/bnuUxg)
+* [デモ](https://is.gd/QikShv)
 
 ----
 
@@ -333,7 +333,7 @@ println!("配列 a の長さ: {}", a.len());
 ~~~
 
 * len() メソッドを呼ぶことで、配列の要素数を取得できます
-* [デモ](https://is.gd/gCsQPu)
+* [デモ](https://is.gd/jfrVHO)
 
 ---
 
@@ -348,7 +348,7 @@ println!("middle.len() = {}", middle.len());
 
 * 配列中のある範囲を表す型
 * ```&配列名[開始インデックス..終了インデックス]```と記述する
-* [デモ](https://is.gd/TBB3nY)
+* [デモ](https://is.gd/ShTLeW)
 
 ---
 
@@ -405,7 +405,7 @@ if x > 10 {
 ~~~
 
 * 条件節を小括弧で囲む必要はありません
-* [デモ](https://is.gd/eA6B4C)
+* [デモ](https://is.gd/lWHM63)
 
 ----
 
@@ -423,7 +423,7 @@ println!("y = {}", y);
 
 * 最後に評価した式の値が評価値となります
 * ; を入れると、その後に空文があるという解釈になります
-* [デモ](https://is.gd/u7ReVY)
+* [デモ](https://is.gd/qaLdx8)
 
 ---
 
@@ -441,7 +441,7 @@ loop {
 ~~~
 
 * 無限ループを記述できます
-* [デモ](https://is.gd/s7SLib)
+* [デモ](https://is.gd/kQ8HFi)
 
 
 ----
@@ -502,7 +502,7 @@ for i in 0..v.len() {
 * 可変長の配列（リスト）です
 * vec! マクロで作成します
 * 詳細は [Vec<T>](https://doc.rust-lang.org/stable/std/vec/) を参照してください
-* [デモ](https://is.gd/XDOd0T)
+* [デモ](https://is.gd/hgXJ2m)
 
 ----
 
@@ -538,7 +538,7 @@ for (index, value) in result.enumerate() {
 ## もくもくタイム：フィボナッチ数列
 
 * [フィボナッチ数](https://ja.wikipedia.org/wiki/%E3%83%95%E3%82%A3%E3%83%9C%E3%83%8A%E3%83%83%E3%83%81%E6%95%B0)を計算する関数 `fib` を実装してみましょう
-* [テンプレートはこちら](https://is.gd/7mKTCt) 
+* [テンプレートはこちら](https://is.gd/KopEOn) 
 
 ---
 
@@ -577,15 +577,16 @@ println!("x = {}", x);
 ### 関数呼び出しと所有権　
 
 ~~~rust
-fn sum_vec(memo:Vec<i32>)->i32{}
+fn func(n: u32, memo: Vec<u32>) -> u32 {}
+
 fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}",sum_vec(v));
-    println!("sum = {}",sum_vec(v));    
-}  
+    let mut memo = vec![0, 1];
+    func(0, memo);
+    func(1, memo);
+}
 ~~~
 
-* ビルドエラーとなります（[デモ](https://is.gd/DocyHD))
+* ビルドエラーとなります
 * 一度目の関数呼び出しで、所有権が移動してしまうためです
 
 ----
@@ -593,108 +594,35 @@ fn main() {
 ### 所有権を返すように変更すれば OK
 
 ~~~rust
-fn sum_vec(memo:Vec<i32>)->(i32, Vec<i32>){}
+fn func(n: u32, memo: Vec<u32>) -> (u32, Vec<u32>) {}
+
 fn main() {
-    let v = vec![1, 2, 3];
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);   
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);
+    let mut memo = vec![0, 1];
+    let (answer, memo) = func(0, memo);
+    let (answer, memo) = func(1, memo);
 }
 ~~~
 
 * 所有権を返り値として返せば、ビルドエラーがおきません
-* タプルを使えば、複数の値をまとめて返せます（[デモ](https://is.gd/eSwwXR))
+* タプルを使えば、複数の値をまとめて返せます
+
+---
+
+### もくもく：ビルドできるように修正してください！
+
+* [こちらのコード](https://is.gd/T3bAdc)をビルドできるように修正してください
 
 ---
 
 ## 参照
 
 ~~~rust
-fn sum_vec(memo: &Vec<i32>)->i32{}
-fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}", sum_vec(&v));
-    println!("sum = {}", sum_vec(&v));    
-}
 ~~~
 
-* ```&``` をつけることで、値への参照を取得できます（[デモ](https://is.gd/bJhCDQ))
-* ```&型名```で、「その型への参照である」というアノテーションができます
-* 参照を使うことで、値の貸し借りが行えます（borrowing）
-* 関数呼び出しが終わると、所有権は自動的に元の所有者に戻ります
-
-----
-
-### 参照と変更可能性
-
-~~~rust
-fn foo(v: &Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let v = vec![];
-    foo(&v);
-}    
-~~~
-
-* 参照している値の変更はできません
-* ビルドエラーになります([デモ](https://is.gd/f8vsR1))
-
-----
-
-### 変更可能な参照
-
-~~~rust
-fn foo(v: &mut Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let mut v = vec![];
-    println!("v.len() = {}", v.len());
-    foo(&mut v);
-    println!("v.len() = {}", v.len());    
-} 
-~~~
-
-* ```&mut``` で変更可能な参照を取得できます
-* ただし変更可能なオブジェクトに限ります
-
-----
-
-### 貸し借りのルール
-
-* 参照専用の参照 (```&```) は複数作れます
-* 変更可能な参照（```&mut```）は、1 つしか作れません
-    * 状態を変化させられるのは、常に一人
-    * 並列処理時の競合を避けるため
-
----
-
-## もくもく：foo を実装してみましょう！
-
-~~~rust
-fn foo(v1:Vec<i32>, v2:Vec<i32>){
-}
-
-fn main() {
-    let v1 = vec![1, 2, 3];
-    let v2 = vec![4, 5, 6];
-
-    let answer = foo(v1, v2);
-    println!("{}", answer);   
-}
-~~~
-
-* 二つのベクトルの総和を求める関数 foo を実装してみましょう
-* [テンプレートはこちら](https://is.gd/HtM4t1)
-* 関数の型を変えてしまってもかまいません
 
 ---
 
 ## パターンマッチ
-
-~~~
 
 ---
 
