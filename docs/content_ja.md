@@ -84,10 +84,6 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 * sum_positive から生成される x86_64 アセンブラ
 * リースビルドした結果    
 
-----
-
-### 並列計算
-
 ---
 
 ## 環境設定
@@ -748,6 +744,37 @@ println!("{}", label);
 
 ## 文字列
 
+|型|説明|
+|--|---|
+|'static str|文字列リテラルの型|
+|str|文字列のスライス|
+|String|変更可能な文字列型|
+
+----
+
+### String と文字列の結合
+
+~~~rust
+let hello = "Hello"; 
+let world = "world!";
+let hello = hello.to_string();
+let buffer = new String();
+buffer = buffer + &hello + world;
+println!("{}", buffer);
+~~~
+
+* ```to_string``` メソッドで、String へ変換できます
+* ```String + str``` もしくは ```String + &String``` で結合できます
+* [デモ](https://is.gd/wFW5vf)
+
+----
+
+### str の作成
+
+~~~rust
+let dog = "hachiko";
+let hachi = &dog[0..5];
+~~~
 
 ---
 
@@ -920,4 +947,5 @@ re.is_match("HeLLo, world"); // true
     * trait, create, モジュール
     * キャスト
     * ライフタイム
+    * 並列計算、クロージャー
 * プルリクお待ちしています！[https://github.com/chikoski/rust-handson](https://github.com/chikoski/rust-handson) 
