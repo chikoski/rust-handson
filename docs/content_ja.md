@@ -846,7 +846,7 @@ fn main() {
 }
 ~~~
 
-* ```[std::env::args](https://doc.rust-lang.org/std/env/fn.args.html)``` で引数をイテレーターとして取得できます
+* [```std::env::args```](https://doc.rust-lang.org/std/env/fn.args.html) で引数をイテレーターとして取得できます
 * collect メソッドで、イテレーターをベクターに変換しています
 * 0 番目の要素は、実行されるコマンドの名前となっています
 
