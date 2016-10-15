@@ -577,16 +577,16 @@ println!("x = {}", x);
 ### 関数呼び出しと所有権　
 
 ~~~rust
-fn func(n:u32, memo:Vec<u32>) -> u32{}
+fn sum_vec(memo:Vec<i32>)->i32{}
 
-fn main(){
-    let mut memo = vec![0, 1];
-    fib(0, memo);
-    fib(1, memo);
-}   
+fn main() {
+    let v = vec![1, 2, 3];
+    println!("sum = {}",sum_vec(v));
+    println!("sum = {}",sum_vec(v));    
+}  
 ~~~
 
-* ビルドエラーとなります
+* ビルドエラーとなります（[デモ](https://is.gd/DocyHD))
 * 一度目の関数呼び出しで、所有権が移動してしまうためです
 
 ----
@@ -594,31 +594,83 @@ fn main(){
 ### 所有権を返すように変更すれば OK
 
 ~~~rust
-fn func(n:u32, memo:Vec<u32>) -> (u32, Vec<u32>){}
+fn sum_vec(memo:Vec<i32>)->(i32, Vec<i32>){}
 
 fn main(){
-    let mut memo = vec![0, 1];
-    let (answer, memo) = func(0, memo);
-    let (answer, memo) = func(1, memo);
+    let v = vec![1, 2, 3];
+    let (sum, v) = sum_vec(v);
+    println!("sum = {}", sum);   
+    let (sum, v) = sum_vec(v);
+    println!("sum = {}", sum);    
 } 
 ~~~
 
 * 所有権を返り値として返せば、ビルドエラーがおきません
-* タプルを使えば、複数の値をまとめて返せます
-
----
-
-### もくもく：ビルドできるように修正してください！
-
-* [こちらのコード](https://is.gd/T3bAdc)をビルドできるように修正してください
+* タプルを使えば、複数の値をまとめて返せます（[デモ](https://is.gd/eSwwXR))
 
 ---
 
 ## 参照
 
 ~~~rust
+fn sum_vec(memo: &Vec<i32>)->i32{}
+
+fn main() {
+    let v = vec![1, 2, 3];
+    println!("sum = {}", sum_vec(&v));
+    println!("sum = {}", sum_vec(&v));    
+}
 ~~~
 
+* ```&``` をつけることで、値への参照を取得できます（[デモ](https://is.gd/bJhCDQ))
+* ```&型名```で、「その型への参照である」というアノテーションができます
+* 参照を使うことで、値の貸し借りが行えます（borrowing）
+* 関数呼び出しが終わると、所有権は自動的に元の所有者に戻ります
+
+----
+
+### 参照と変更可能性
+
+~~~rust
+fn foo(v: &Vec<i32>){
+    v.push(5);
+}
+fn main(){
+    let v = vec![];
+    foo(&v);
+}    
+~~~
+
+* 参照している値の変更はできません
+* ビルドエラーになります([デモ](https://is.gd/f8vsR1))
+
+----
+
+### 変更可能な参照
+
+~~~rust
+fn foo(v: &mut Vec<i32>){
+    v.push(5);
+}
+fn main(){
+    let mut v = vec![];
+    println!("v.len() = {}", v.len());
+    foo(&mut v);
+    println!("v.len() = {}", v.len());    
+} 
+~~~
+
+* ```&mut``` で変更可能な参照を取得できます
+* ただし変更可能なオブジェクトに限ります
+
+----
+
+### 貸し借りのルール
+
+* 参照専用の参照 (```&```) は複数作れます
+* 変更可能な参照（```&mut```）は、1 つしか作れません
+    * 状態を変化させられるのは、常に一人
+    * 並列処理時の競合を避けるため
 
 ---
 
