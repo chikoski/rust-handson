@@ -14,7 +14,7 @@ Mozilla Japan
    * owenership と borrowing
    * ユーザー定義型（struct, enum, trait）
    * 並列処理（メッセージパッシングと共有メモリー）
-* 最終的には簡単な [cat コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230725/)と、同じく簡単な [grep コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230786/)を実装します     
+* 簡単な [cat コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230725/)と、同じく簡単な [grep コマンド](http://itpro.nikkeibp.co.jp/article/COLUMN/20060227/230786/)を実装します     
 
 ---
 
@@ -105,7 +105,7 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 ~~~
 
 * Mac / Linux の場合： [rustup](https://www.rustup.rs/) を利用してインストールします
-* Windows の場合：[インストーラーをダウンロード](https://www.rust-lang.org/en-US/downloads.html)して、インストールします
+* Windows の場合：[インストーラー](https://www.rust-lang.org/en-US/downloads.html)で、インストールします
 
 ----
 
@@ -347,7 +347,7 @@ println!("middle.len() = {}", middle.len());
 ~~~
 
 * 配列中のある範囲を表す型
-* ~&配列名[開始インデックス..終了インデックス]~と記述する
+* ```&配列名[開始インデックス..終了インデックス]```と記述する
 * [デモ](https://is.gd/TBB3nY)
 
 ---
@@ -398,7 +398,7 @@ let x = 5;
 if x > 10 {
   println!("x > 10")
 }else if x > 0{
-  println!("x < x <= 10)  
+  println!("x < x <= 10")  
 }else{
   println!("x < 0")
 };
@@ -430,18 +430,18 @@ println!("y = {}", y);
 ## loop 文
 
 ~~~rust
-let i = 0;
+let mut i = 0;
 loop{
+    i = i +1;
     println!("{} 回目の出力です", i);
-    let i = i + 1;
-    if i > 10{
-        break;
-    }     
+    if i > 9{
+       break;
+    }
 }
 ~~~
 
 * 無限ループを記述できます
-* [デモ](https://is.gd/eWDb0V)
+* [デモ](https://is.gd/s7SLib)
 
 
 ----
@@ -472,6 +472,7 @@ for x in 0..10 {
 ~~~
 
 * `0..10` は整数の範囲を表すオブジェクトのリテラル
+* イテレーターを捜査する、という目的が主
 
 ----
 
@@ -541,11 +542,91 @@ for (index, value) in result.enumerate() {
 
 ---
 
-## Ownership
+## 所有権と move セマンティックス
+
+~~~rust
+let v = vec![1, 2, 3];
+println!("v[1] = {}", v[1]);
+let v2 = v;
+println!("v2[1] = {}", v2[1]);
+println!("v[1] = {}", v[1]);
+~~~
+
+* ビルドエラーとなります（[デモ](https://is.gd/Iy1MlJ))
+* vec![1, 2, 3] の所有権が v から v2 へと移動してるためです
+* 束縛するとは「値の所有権を持つ」ことと解釈されます
+
+----
+
+###　ビルドエラーにならない場合もあります 
+
+~~~rust
+let x = 10;
+let y = x;
+println!("x = {}", x);
+~~~
+
+* i32 などは、束縛時に値をコピーします（[デモ](https://is.gd/iqsf3d))
+* Copy trait を実装しているもの
+* 上記の例では x と y は
+    * 「同じ数値をもつ同じもの」を束縛しているのではなく
+    * 「同じ数値をもつ、違うもの」を、それぞれ束縛しています
+
+----
+
+### 関数呼び出しと所有権　
+
+~~~rust
+fn func(n:u32, memo:Vec<u32>) -> u32{}
+
+fn main(){
+    let mut memo = vec![0, 1];
+    fib(0, memo);
+    fib(1, memo);
+}   
+~~~
+
+* ビルドエラーとなります
+* 一度目の関数呼び出しで、所有権が移動してしまうためです
+
+----
+
+### 所有権を返すように変更すれば OK
+
+~~~rust
+fn func(n:u32, memo:Vec<u32>) -> (u32, Vec<u32>){}
+
+fn main(){
+    let mut memo = vec![0, 1];
+    let (answer, memo) = func(0, memo);
+    let (answer, memo) = func(1, memo);
+} 
+~~~
+
+* 所有権を返り値として返せば、ビルドエラーがおきません
+* タプルを使えば、複数の値をまとめて返せます
+
+---
+
+### もくもく：ビルドできるように修正してください！
+
+* [こちらのコード](https://is.gd/T3bAdc)をビルドできるように修正してください
+
+---
+
+## 参照
+
+~~~rust
+~~~
+
 
 ---
 
 ## パターンマッチ
+
+---
+
+## 文字列
 
 ---
 
