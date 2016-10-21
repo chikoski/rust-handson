@@ -25,29 +25,50 @@
 	<body>
 		<div class="reveal">
 			<div class="slides">
+			</div>
+		</div>
+
+		<template id="markdown-section">
 				<section data-markdown="content_ja.md"
 			           data-separator="^\n---\n$"
                  data-separator-vertical="^\n----\n$"
                  data-separator-notes="^Note:"
+								 class="markdown-slide"
 				</section>
-			</div>
-		</div>
-
+		</template>
+		<template id="locale-selector">
+				<div class="locale-selector">
+					<select>
+						<option value="">Choose a locale</option>
+						<option value="ja-JP">日本語</option>
+						<option value="en-US">English</option>
+					</select>
+				</div>			
+		</template>
 		<script src="lib/js/head.min.js"></script>
 		<script src="js/reveal.js"></script>
-
+		<script src="js/locale-selector.js"></script>
 		<script>
-			// More info https://github.com/hakimel/reveal.js#configuration
-			Reveal.initialize({
-				history: true,
-
-				// More info https://github.com/hakimel/reveal.js#dependencies
-				dependencies: [
-					{ src: 'plugin/markdown/marked.js' },
-					{ src: 'plugin/markdown/markdown.js' },
-					{ src: 'plugin/notes/notes.js', async: true },
-					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
-				]
+			LocaleSelector.initialize({
+				templates: {
+					slide: document.querySelector("#markdown-section"),
+					selector: document.querySelector("#locale-selector")
+				},
+				el: document.querySelector(".slides"),
+				locales: {
+					"en-US": "content_en.md",
+					"ja-JP": "content_ja.md"
+				},
+				default: "ja-JP",
+				reveal: {
+					history: true,
+					dependencies: [
+						{ src: 'plugin/markdown/marked.js' },
+						{ src: 'plugin/markdown/markdown.js' },
+						{ src: 'plugin/notes/notes.js', async: true },
+						{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+					]
+				}
 			});
 		</script>
 	</body>
