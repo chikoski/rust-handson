@@ -150,7 +150,7 @@ fn main() {
 
 ---
 
-## Variable
+## Variables
 
 ~~~rust
 fn main() {
@@ -191,7 +191,7 @@ fn main() {
 ~~~
 
 * [Build error occurs when we build the this code](https://is.gd/kieuKz)
-* We can not change the binded value
+* We can not change binded values
 
 ----
 
@@ -211,7 +211,7 @@ fn main() {
 
 ----
 
-### ```mut``: mutable variables declaration 
+### ```mut```: mutable variables declaration 
 
 ~~~rust
 fn main() {
@@ -222,11 +222,12 @@ fn main() {
 }
 ~~~
 
+* We can change binded values when their variables declared with `mut` keyword
 * [Demo](https://is.gd/hx0FuE)
 
 ---
 
-### Function declaration
+### Function declarations
 
 ~~~rust
 fn add(a: i32, b: i32) -> i32 {
@@ -349,6 +350,10 @@ let p2 = (3, 4); // p2: (i32, i32)
 p1 = p2;
 ~~~
 
+* We can create a fixed size ordered list as tuple
+* Paris, triples, etc can be represented as tuples
+* A tuple can be annotated as `(type of first element, type of second element, ...)`
+
 ----
 
 ### Access to tuple elements
@@ -443,6 +448,8 @@ while !done {
 }
 ~~~
 
+* We do not need parenthesize loop conditions as well
+
 ---
 
 ## for statement: scan items over iterators
@@ -465,7 +472,7 @@ for (index, value) in (0..10).enumerate() {
 }
 ~~~
 
-* We can refer the index value of each iteration by calling enumerate method関数を使うと、繰り返した回数も取得できます
+* We can refer the index value of each iteration by calling enumerate method
 
 ---
 
@@ -514,9 +521,9 @@ for (index, value) in result.enumerate() {
 
 ---
 
-## Exercise: fibonachi function
+## Exercise: fibonacci function
 
-* [Fibonnaci](https://en.wikipedia.org/wiki/fibonacci)
+* [Fibonacci](https://en.wikipedia.org/wiki/fibonacci)
 * [Skelton code](https://is.gd/7mKTCt) 
 
 ----
@@ -689,10 +696,10 @@ fn main() {
 ~~~rust
 let x = 5;
 let label = match x {
-    1 => "壱",
-    2 => "弐",
-    3 => "参",
-    _ => "その他"
+    1 => "one",
+    2 => "two",
+    3 => "three",
+    _ => "many"
 };
 println!("{} : {}", x, label);
 ~~~
@@ -708,16 +715,16 @@ println!("{} : {}", x, label);
 ~~~rust
 let x = 5;
 let label = match x {
-    1 => "壱",
-    2 => "弐",
-    3 => "参",
-    4 | 5 | 6 | 7 | 8 | 9 => "一桁",
-    _ => "その他",
+    1 => "one",
+    2 => "tow",
+    3 => "three",
+    4 | 5 | 6 | 7 | 8 | 9 => "< 10",
+    _ => "many",
 };
 println!("{} : {}", x, label);
 ~~~
 
-* ```|``` を使うと、複数のパターンをまとめられます
+* We can combine two or more patterns with ```|``` 
 
 ----
 
@@ -726,11 +733,11 @@ println!("{} : {}", x, label);
 ~~~rust
 let x = (1, 5);
 let label = match x {
-    (0, 0) => "ゼロ",
-    (1, 0) | (0, 1) => "単位",
-    (1, _) => "x は 1",
-    (_, 1) => "y は 1",
-    _ => "その他"
+    (0, 0) => "Zero vector",
+    (1, 0) | (0, 1) => "Unit vector",
+    (1, _) => "(1, ?)",
+    (_, 1) => "(?, 1)",
+    _ => "The others"
 };
 println!("{}", label);
 ~~~
@@ -869,10 +876,10 @@ fn main() {
 }
 ~~~
 
-* Choose appropriate process accoding to file operation result  
+* Changes the control flow accoding to the file operation's result with a pattern match  
     * ```Ok```: success
     * ```Err```: failed
-* We can refer ```Result``` object's payload by variable written in ```()```
+* We can refer ```Result``` object's payload by a variable written in ```()```
 
 ----
 
@@ -917,7 +924,7 @@ regex = "0.1"
 extern crate regex;
 use regex::Regex;
 
-//　中略
+//snipped
 
 let re = Regex::new(r"[Hh][Ee][Ll][Ll][Oo]").unwrap();
 re.is_match("HeLLo, world"); // true
