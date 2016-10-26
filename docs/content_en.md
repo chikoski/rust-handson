@@ -11,9 +11,9 @@ N. Shimizu (nshimizu@mozilla-japan.org)
 * Convince you to think Rust is awesome :p
 * Topics
    * Fundamental syntax
-   * Owenership and move semantics
-   * Reference and borrowing
-* Implement simple cat and grep command  
+   * Ownership and move semantics
+   * References and borrowing
+* Implement simple cat and grep commands 
 
 ---
 
@@ -34,7 +34,7 @@ N. Shimizu (nshimizu@mozilla-japan.org)
 
 * Safe and efficient system programming
 * Characteristics
-    * Procedural language, abstract data type, closure
+    * Procedural language, abstract data type, closures
     * Static typing, strong type inference
     * Safe pointer operations
     * Parallel programming with message passing / shared memory
@@ -53,12 +53,12 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 }
 ~~~
 
-* This function sums positive values in given list
-* filter is a high-ordered function (a closure given)
+* This function sums positive values in the given list
+* filter is a higher-ordered function (a closure given)
 
 ----
 
-### Rustc emits effectve machine code
+### Rustc emits effective machine code
 
 ~~~x86asm
     leaq    (%rdi,%rsi,4), %rcx
@@ -79,14 +79,14 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
     retq
 ~~~
 
-* An assembly code emmtied from sum_positive with release build
+* An assembly code emitted from sum_positive with release build
 
 ---
 
 ## Set up
 
 * Online compiler: [http://play.rust-lang.org/](http://play.rust-lang.org/)
-* Install Rust compiler to your own environment, if you want to do at offline.
+* Install Rust compiler to your own environment, if you want to do it offline.
 
 ----
 
@@ -174,7 +174,7 @@ fn main() {
 }
 ~~~
 
-* Binding: to make connection between a value and a varible name
+* Binding: to make connection between a value and a variable name
 * ```=```: operator to make variable bindings
 
 ----
@@ -191,7 +191,7 @@ fn main() {
 ~~~
 
 * [Build error occurs when we build the this code](https://is.gd/kieuKz)
-* We can not change the binded value
+* We can not change the bound value
 
 ----
 
@@ -206,8 +206,8 @@ fn main() {
 }
 ~~~
 
-* In this case, we will not face [build error](https://is.gd/m79jCx)
-* We make another variable binding with second ```let``` statement
+* In this case, we will not face a [build error](https://is.gd/m79jCx)
+* We make another variable binding with a second ```let``` statement
 
 ----
 
@@ -239,7 +239,7 @@ fn main() {
 }
 ~~~
 
-* We need to put type annotations to arguments and return value
+* We need to put type annotations to arguments and return values
 * [Demo](https://is.gd/JPFez0)
 
 ----
@@ -255,7 +255,7 @@ fn add(a: i32, b: i32) -> i32 {
 ~~~
 
 * ```variable_name:type```
-* We can ommit type annotations when compiler can infer types
+* We can omit type annotations when compiler can infer types
 
 ----
 
@@ -270,8 +270,8 @@ fn another_add(a: i32, b: i32) -> i32 {
 }
 ~~~
 
-* Functions returns the evaluated values of their last expression
-* We can also describe return values with ```return``` statement expricitly
+* Functions return the evaluated values of their last expression
+* We can also describe return values with ```return``` statement explicitely
 * The return values are annotated as `-> type` 
 
 ---
@@ -294,9 +294,9 @@ let a = [1, 2, 3]; // a: [i32; 3]
 let mut m = [1, 2, 3]; // m: [i32; 3]
 ~~~
 
-* Fixed length, every items belong to same type
+* Fixed length, every item belong to same type
 * Annotated as ```[type; size]``` 
-* We need to declare as mutable object when we want to chanage its items
+* We need to declare a mutable object when we want to change its items
 
 ----
 
@@ -321,7 +321,7 @@ let a = [1, 2, 3];
 println!("size of array a: {}", a.len());
 ~~~
 
-* We can refer the array length by calling its ```len``` method 
+* We can refer to the arrays length by calling its ```len``` method 
 * [Demo](https://is.gd/gCsQPu)
 
 ---
@@ -361,14 +361,14 @@ let y = p.1;
 let z = p.2;
 ~~~
 
-* We can access each field by desctructuring
-* Also accessible each items with their indexes
+* We can access each field by destructuring
+* Also each items can also be accessed with their indexes
 
 ---
 
 ## Control flow
 
-|Conrol flow|Statement|
+|Control flow|Statement|
 |------|--|
 |Conditional branch|if, match|
 |Loop|for, loop, while|
@@ -405,7 +405,7 @@ let y = if x > 0 {
 println!("y = {}", y);   
 ~~~
 
-* ```if``` is a expresison, not statement, in Rust 
+* ```if``` is a expression, not statement in Rust
 * So, it has an evaluation value
 * [Demo](https://is.gd/u7ReVY)
 
@@ -453,7 +453,7 @@ for x in 0..10 {
 }
 ~~~
 
-* `0..10`: an object literal, which represents a list consists of integers within the specified ragnge
+* `0..10`: an object literal, which represents a list consisting of integers within the specified range
 
 ----
 
@@ -465,7 +465,7 @@ for (index, value) in (0..10).enumerate() {
 }
 ~~~
 
-* We can refer the index value of each iteration by calling enumerate method関数を使うと、繰り返した回数も取得できます
+* We can refer to the index value of each iteration by calling enumerate method
 
 ---
 
@@ -509,19 +509,19 @@ for (index, value) in result.enumerate() {
 }
 ~~~
 
-* An iterator has several methods to create another iterators such as ```filter``` and ```map``` 
+* An iterator has several methods to create other iterators such as ```filter``` and ```map``` 
 * [Demo](https://is.gd/fzmX9R)
 
 ---
 
-## Exercise: fibonachi function
+## Exercise: fibonacci function
 
 * [Fibonnaci](https://en.wikipedia.org/wiki/fibonacci)
 * [Skelton code](https://is.gd/7mKTCt) 
 
 ----
 
-### Naive implmentation with JavaScript
+### Naive implementation with JavaScript
 
 ~~~javascript
 function fib(n){
@@ -547,7 +547,7 @@ println!("v2[1] = {}", v2[1]);
 println!("v[1] = {}", v[1]);
 ~~~
 
-* This code can not be compiled: [Demo](https://is.gd/Iy1MlJ))
+* This code cannot be compiled: [Demo](https://is.gd/Iy1MlJ))
 * Because ownership against ```vec![1, 2, 3]``` is moved from ```v``` to ```v2```
 * Variable binding means "binded value is a possesion of the biding variable" 
 
@@ -561,10 +561,10 @@ let y = x;
 println!("x = {}", x);
 ~~~
 
-* Some values (e.g. ```i32```) copy themselves when new variable binding created ([Demo](https://is.gd/iqsf3d))
-    * ```x``` and ```y``` do not bind same object
-    * but, they bind different and equivalent object
-* Their type imlements ```Copy``` trait 
+* Some values (e.g. ```i32```) copy themselves when new variable bindings are created ([Demo](https://is.gd/iqsf3d))
+    * ```x``` and ```y``` do not bind the same object
+    * but, they bind different and equivalent objects
+* Their type implements ```Copy``` trait 
 
 ----
 
@@ -613,13 +613,13 @@ fn main() {
 ~~~
 
 * We can get a reference to a value by specifying ```&``` before its name
-* The variables are annoted as ```&Typename```, which are binded to a value belonging to the type
-* We can borrow the ownership of a value to functions temporaly by passing its reference 
+* The variables are annoted as ```&Typename```, which are bound to a value belonging to the type
+* We can borrow the ownership of a value to functions temporarily by passing its reference 
 * The ownership automatically returns to the owners when the function call finished
 
 ----
 
-### Borrwed values are immutable
+### Borrowed values are immutable
 
 ~~~rust
 fn foo(v: &Vec<i32>){
@@ -635,7 +635,7 @@ fn main(){
 
 ----
 
-### Mutable borrwed values
+### Mutable borrowed values
 
 ~~~rust
 fn foo(v: &mut Vec<i32>){
@@ -678,13 +678,13 @@ fn main() {
 }
 ~~~
 
-* Implment a function to sum all item in the given 2 vectors
-* [Skelton code](https://is.gd/HtM4t1)
-* We can change the funcitons' type annotations
+* Implement a function to sum all item in the given 2 vectors
+* [Skeleton code](https://is.gd/HtM4t1)
+* We can change the functions type annotations
 
 ---
 
-## match expression: patten match
+## match expression: pattern match
 
 ~~~rust
 let x = 5;
@@ -698,7 +698,7 @@ println!("{} : {}", x, label);
 ~~~
 
 * [Demo](https://is.gd/gXr0zW)
-* ```_``` matches the 
+* ```_``` matches the uncovered cases
 
 
 ----
@@ -717,7 +717,7 @@ let label = match x {
 println!("{} : {}", x, label);
 ~~~
 
-* ```|``` を使うと、複数のパターンをまとめられます
+* ```|``` matches multiple patterns at once
 
 ----
 
@@ -737,7 +737,7 @@ println!("{}", label);
 
 ---
 
-## Texts
+## Text
 
 |Type|Description|
 |--|---|
@@ -747,7 +747,7 @@ println!("{}", label);
 
 ----
 
-### Text concatination
+### Text concatenation
 
 ~~~rust
 let hello = "Hello"; 
@@ -760,8 +760,8 @@ println!("{}", buffer);
 ~~~
 
 * We can create a ```String``` object from a ```str``` object by calling its ```to_string``` method
-* ```fmt!``` macro is the easiest way to concatinate texts
-* We can also concatintate texts with ```+``` operation   
+* ```fmt!``` macro is the easiest way to concatenate texts
+* We can also concatenate texts with ```+``` operation   
 * [Demo](https://is.gd/wFW5vf)
 
 ----
@@ -787,13 +787,13 @@ let hachi = &dog[0..5];
 
 ----
 
-### Skelton code generation with Cargo
+### Skeleton code generation with Cargo
 
 ~~~sh
 % cargo new --bin cat
 ~~~
 
-* This command will generate skelton code for binaries, not libraries
+* This command will generate skeleton code for binaries, not libraries
 
 ----
 
@@ -828,7 +828,7 @@ fn main() {
 ~~~
 
 * [```std::env::args```](https://doc.rust-lang.org/std/env/fn.args.html) returns an iterator containing commmand line arguments
-* ```collect``` method returns a vector object consists of elemnent in the iterator
+* ```collect``` method returns a vector object consisting of elements in the iterator
 * The first (```args[0]```) argument is the command name
 
 ----
@@ -850,7 +850,7 @@ fn read_file(filename: String) -> Result<String, io::Error> {
 ~~~
 
 * We can access file content via ```File``` object, which is created by calling ```File::open```
-* ```File::open``` returns ```Result``` object, with which we can determin the file operation failed or not
+* ```File::open``` returns ```Result``` object, with which we can determine if the file operation failed or not
 
 ----
 
@@ -869,7 +869,7 @@ fn main() {
 }
 ~~~
 
-* Choose appropriate process accoding to file operation result  
+* Choose appropriate process according to file operation result  
     * ```Ok```: success
     * ```Err```: failed
 * We can refer ```Result``` object's payload by variable written in ```()```
@@ -883,7 +883,7 @@ fn main() {
 
 ---
 
-## Challange: grep command implementation
+## Challenge: grep command implementation
 
 ~~~sh
 % grep patterns grep.txt
@@ -893,8 +893,8 @@ fn main() {
      grep and egrep, but can only handle fixed patterns (i.e. it does not% grep hello
 ~~~      
 
-* Try to implement grep command by modifing the cat you implemented above  
-* grep is a command to pick the lines containing specified word
+* Try to implement the grep command by modifing the cat you implemented above  
+* grep is a command to pick the lines containing a specified word
 
 ----
 
@@ -924,13 +924,13 @@ re.is_match("HeLLo, world"); // true
 ~~~
 
 * We can test a text match the regular expression by calling its ```is_match``` method
-* [Refer this document for details](https://doc.rust-lang.org/regex/regex/index.html)
+* [Refer to this document for details](https://doc.rust-lang.org/regex/regex/index.html)
 
 ---
 
 ### Features we can add...
 
-* Show the lines which do not match given pattern
+* Show the lines which do not match the given pattern
 * Specifying patterns with regular expressions
 * Speeding up with parallel programming
 * etc
@@ -942,7 +942,7 @@ re.is_match("HeLLo, world"); // true
 * Topics we do not covered
     * User defined types（Struct / Enum）
     * Generics
-    * traits, creates, modules
+    * traits, crates, modules
     * Cast
     * Life time
     * Parallelism, closure
