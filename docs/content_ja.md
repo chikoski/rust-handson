@@ -117,11 +117,7 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 
 ## Hello World
 
-~~~rust
-fn main() {
-    println!("Hello, world!");
-}
-~~~
+<pre><code data-source="samples/helloworld/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * [こちらで実行できます](https://is.gd/w9hWRA)
 * 一から書きたい場合は [こちら](https://is.gd/LR2nNa)
@@ -130,11 +126,7 @@ fn main() {
 
 ### main 関数
 
-~~~rust
-fn main() {
-    println!("Hello, world!");
-}
-~~~
+<pre><code data-source="samples/helloworld/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * Rust のプログラムは、main 関数から実行が始まります
 * fn は関数を定義する文です
@@ -143,11 +135,7 @@ fn main() {
 
 ### println!
 
-~~~rust
-fn main() {
-    println!("Hello, world!");
-}
-~~~
+<pre><code data-source="samples/helloworld/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * リテラルを標準出力へ出力するマクロ
 * 変数の埋め込みにも対応
