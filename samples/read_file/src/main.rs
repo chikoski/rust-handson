@@ -11,10 +11,9 @@ fn read_file(filename:String) -> Result<String, io::Error>{
 }
 
 fn main() {
-    let args:Vec<String> = env::args().collect();
-
-    if args.len() > 1{
-        println!("{}", match read_file(args[1].clone()){
+    let mut args = env::args();
+    if let Some(file) = args.nth(1) {
+        println!("{}", match read_file(file.clone()){
             Ok(content) => content,
             Err(reason) => panic!(reason) 
         });
