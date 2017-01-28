@@ -4,3 +4,6 @@
 **/Cargo.lock
 **/.cargo-lock
 samples/**/target
+node_modules/*
+yarn.lock
+yarn-error.log
