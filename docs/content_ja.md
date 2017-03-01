@@ -144,12 +144,7 @@ fn sum_pos(v: &Vec<i32>) -> i32 {
 
 ## 変数
 
-~~~rust
-fn main() {
-    let name = "Chiko";
-    println!("Hello, {}", name);
-}
-~~~
+<pre><code data-source="samples/bindings/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * 変数は宣言してから利用します（束縛 / 参照）
 * let 文で変数名を宣言できます
@@ -159,12 +154,7 @@ fn main() {
 
 ### 変数の束縛
 
-~~~rust
-fn main() {
-    let name = "Chiko";
-    println!("Hello, {}", name);
-}
-~~~
+<pre><code data-source="samples/bindings/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * 束縛：値と名前を結びつけること
 * 便宜上、代入と呼ぶこともあります
@@ -173,30 +163,31 @@ fn main() {
 
 ### 再代入は原則できません
 
-~~~rust
-fn main() {
-    let name = "Chiko";
-    println!("Hello, {}", name);
-    name = "Shimizu";
-    println!("Hello, {}", name);
-}
-~~~
+<pre><code data-source="samples/re-assignment/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * [コンパイルエラー](https://is.gd/kieuKz)になります
 * let 文で宣言された変数は変更できません
 
 ----
 
+### 再代入に対するコンパイルエラー
+
+~~~
+error[E0384]: re-assignment of immutable variable `name`
+ --> reassignment.rs:4:5
+  |
+2 |     let name = "Chiko";
+  |         ---- first assignment to `name`
+3 |     println!("Hello, {}", name);
+4 |     name = "Shimizu";
+  |     ^^^^^^^^^^^^^^^^ re-assignment of immutable variable
+~~~
+
+----
+
 ### 再び束縛する
 
-~~~rust
-fn main() {
-    let name = "Chiko";
-    println!("Hello, {}", name);
-    let name = "Shimizu";
-    println!("Hello, {}", name);
-}
-~~~
+<pre><code data-source="samples/re-binding/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * これは[コンパイルエラーが起きません](https://is.gd/m79jCx)
 * 束縛を作り直しています（代入ではないことに注意）
@@ -205,14 +196,7 @@ fn main() {
 
 ### 変更可能な変数
 
-~~~rust
-fn main() {
-    let mut name = "Chiko";
-    println!("Hello, {}", name);
-    name = "Shimizu";
-    println!("Hello, {}", name);
-}
-~~~
+<pre><code data-source="samples/mutable-variable/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * mut 修飾子をつけると、変更可能な変数が宣言されます
 * [デモページ](https://is.gd/hx0FuE)
@@ -221,16 +205,7 @@ fn main() {
 
 ### 関数宣言
 
-~~~rust
-fn add(a: i32, b: i32) -> i32 {
-    a + b
-}
-
-fn main() {
-    println!("1 + 1 = {}", add(1, 1));
-    println!("13 + 23 = {}", add(13, 23));
-}
-~~~
+<pre><code data-source="samples/function/src/main.rs" data-trim class="hljs rust"></code></pre>
 
 * 引数と返り値の型を明示します
 * [動作例](https://is.gd/JPFez0)
@@ -239,13 +214,7 @@ fn main() {
 
 ### 変数に対する型アノテーション
 
-~~~rust
-fn add(a: i32, b: i32) -> i32 {
-    let answer: i32;
-    answer = a + b;
-    answer
-}
-~~~
+<pre><code data-source="snippets/type-annotation.rs" data-trim class="hljs rust"></code></pre>
 
 * ```変数:型``` と書くことで変数の型を明示できます
 * 型が推論できる場合は、型アノテーションは省略できます
@@ -254,14 +223,7 @@ fn add(a: i32, b: i32) -> i32 {
 
 ### 返り値
 
-~~~rust
-fn add(a: i32, b: i32) -> i32 {
-    a + b
-}
-fn another_add(a: i32, b: i32) -> i32 {
-    return a + b;
-}
-~~~
+<pre><code data-source="snippets/signature.rs" data-trim class="hljs rust"></code></pre>
 
 * 最後の式の評価値が返り値となります
 * return 文で明示することもできます
@@ -277,15 +239,13 @@ fn another_add(a: i32, b: i32) -> i32 {
 |char|文字型|
 |i8, i16, i32, u8, u16, u32, u64, isize, usize|整数型|
 |f32, f64|浮動小数点型|
+|'static str, str, String|文字列|
 
 ---
 
 ## 配列
 
-~~~rust
-let a = [1, 2, 3]; // a: [i32; 3]
-let mut m = [1, 2, 3]; // m: [i32; 3]
-~~~
+<pre><code data-source="snippets/array/literal.rs" data-trim class="hljs rust"></code></pre>
 
 * 固定長で、要素は全て同じデータ型です
 * ```[型名; 要素数]``` と型アノテーションします
@@ -295,12 +255,7 @@ let mut m = [1, 2, 3]; // m: [i32; 3]
 
 ### 要素の参照
 
-~~~rust
-let a = [1, 2, 3];
-println!("0番目の要素: {}", a[0]);
-println!("1番目の要素: {}", a[1]);
-println!("2番目の要素: {}", a[2]);
-~~~
+<pre><code data-source="snippets/array/items.rs" data-trim class="hljs rust"></code></pre>
 
 * 添え字で、個々の要素へアクセスします
 * 先頭の添え字は 0 です
@@ -310,10 +265,7 @@ println!("2番目の要素: {}", a[2]);
 
 ### 配列の長さ
 
-~~~rust
-let a = [1, 2, 3];
-println!("配列 a の長さ: {}", a.len());
-~~~
+<pre><code data-source="snippets/array/length.rs" data-trim class="hljs rust"></code></pre>
 
 * len() メソッドを呼ぶことで、配列の要素数を取得できます
 * [デモ](https://is.gd/gCsQPu)
@@ -322,12 +274,7 @@ println!("配列 a の長さ: {}", a.len());
 
 ## スライス
 
-~~~rust
-let a = [0, 1, 2, 3, 4, 5];
-let middle = &a[1..4];
-println!("a.len() = {}", a.len());
-println!("middle.len() = {}", middle.len());
-~~~
+<pre><code data-source="snippets/array/slice.rs" data-trim class="hljs rust"></code></pre>
 
 * 配列中のある範囲を表す型
 * ```&配列名[開始インデックス..終了インデックス]```と記述する
@@ -337,12 +284,7 @@ println!("middle.len() = {}", middle.len());
 
 ## タプル
 
-~~~rust
-let x = (1, "hello"); // x: (i32, &str)
-let mut p1 = (1, 2); // p1: (i32, i32)
-let p2 = (3, 4); // p2: (i32, i32)
-p1 = p2;
-~~~
+<pre><code data-source="snippets/tuple/basics.rs" data-trim class="hljs rust"></code></pre>
 
 * 値の組みです
 * 型と要素数が同じなら、代入できます 
@@ -351,13 +293,7 @@ p1 = p2;
 
 ### 要素へのアクセス
 
-~~~rust
-let p = (1, 2, 3);
-let (x, y, z) = p;
-let x = p.0;
-let y = p.1;
-let z = p.2;
-~~~
+<pre><code data-source="snippets/tuple/items.rs" data-trim class="hljs rust"></code></pre>
 
 * 分割代入をするか、インデックスを利用して要素へアクセスします
 
@@ -370,22 +306,11 @@ let z = p.2;
 |条件分岐|if, match|
 |繰り返し|for, loop, while|
 
-* Rust の制御構文は式です（文ではありません）
-
 ---
 
 ## 条件分岐
 
-~~~rust
-let x = 5;
-if x > 10 {
-    println!("x > 10")
-} else if x > 0 {
-    println!("x < x <= 10")
-} else {
-    println!("x < 0")
-};
-~~~
+<pre><code data-source="snippets/if/basics.rs" data-trim class="hljs rust"></code></pre>
 
 * 条件節を小括弧で囲む必要はありません
 * [デモ](https://is.gd/eA6B4C)
@@ -394,15 +319,7 @@ if x > 10 {
 
 ### if 式
 
-~~~rust
-let x = 5;
-let y = if x > 0 {
-    1
-} else {
-    0
-};
-println!("y = {}", y);   
-~~~
+<pre><code data-source="snippets/if/expression.rs" data-trim class="hljs rust"></code></pre>
 
 * 最後に評価した式の値が評価値となります
 * ; を入れると、その後に空文があるという解釈になります
@@ -412,16 +329,7 @@ println!("y = {}", y);
 
 ## loop 文
 
-~~~rust
-let mut i = 0;
-loop {
-    i = i +1;
-    println!("{} 回目の出力です", i);
-    if i > 9 {
-       break;
-    }
-}
-~~~
+<pre><code data-source="snippets/loop.rs" data-trim class="hljs rust"></code></pre>
 
 * 無限ループを記述できます
 * [デモ](https://is.gd/s7SLib)
@@ -431,28 +339,13 @@ loop {
 
 ## while 文
 
-~~~rust
-let mut x = 5; // mut x: i32
-let mut done = false; // mut done: bool
-
-while !done {
-    x += x - 3;
-    println!("{}", x);
-    if x % 5 == 0 {
-        done = true;
-    }
-}
-~~~
+<pre><code data-source="snippets/while.rs" data-trim class="hljs rust"></code></pre>
 
 ---
 
 ## for 文
 
-~~~ rust
-for x in 0..10 {
-    println!("{}", x); // x: i32
-}
-~~~
+<pre><code data-source="snippets/iterator/for.rs" data-trim class="hljs rust"></code></pre>
 
 * `0..10` は整数の範囲を表すオブジェクトのリテラル
 * イテレーターを捜査する、という目的が主
@@ -461,11 +354,7 @@ for x in 0..10 {
 
 ### enumerate 関数
 
-~~~ rust
-for (index, value) in (0..10).enumerate() {
-    println!("index = {}, value = {}", index, value);
-}
-~~~
+<pre><code data-source="snippets/enumerator/for.rs" data-trim class="hljs rust"></code></pre>
 
 * enumerate 関数を使うと、繰り返した回数も取得できます
 * タプルが帰ってきます
@@ -474,13 +363,7 @@ for (index, value) in (0..10).enumerate() {
 
 ## ベクター
 
-~~~rust
-let v = vec![1, 2, 3, 4, 5];
-let zeroes = vec![0; 10];
-for i in 0..v.len() {
-    println!("v[{}] = {}", i, v[i]);
-}
-~~~
+<pre><code data-source="snippets/vector/basics.rs" data-trim class="hljs rust"></code></pre>
 
 * 可変長の配列（リスト）です
 * vec! マクロで作成します
@@ -491,12 +374,7 @@ for i in 0..v.len() {
 
 ### イテレーターを利用した繰り返し
 
-~~~rust
-let v = vec![1, 2, 3, 4, 5];
-for (index, value) in v.iter().enumerate() {
-    println!("v[{}] = {}", index, value);
-}
-~~~
+<pre><code data-source="snippets/vector/scan.rs" data-trim class="hljs rust"></code></pre>
 
 * iter メソッドで、ベクターをイテレーターに変換できます
 * [デモ](https://is.gd/C6dys6)
@@ -505,13 +383,7 @@ for (index, value) in v.iter().enumerate() {
 
 ### filter / map
 
-~~~rust
-let v = vec![1, 2, 3, 4, 5];
-let result = v.iter().filter(|&n| n % 2 != 0).map(|n| n + 1);
-for (index, value) in result.enumerate() {
-    println!("result[{}]:{}", index, value);
-}
-~~~
+<pre><code data-source="snippets/vector/filter-map.rs" data-trim class="hljs rust"></code></pre>
 
 * イテレーターは filter や map メソッドを持っています
 * [デモ](https://is.gd/fzmX9R)
@@ -527,29 +399,13 @@ for (index, value) in result.enumerate() {
 
 ### ナイーブに JS で実装した例
 
-~~~javascript
-function fib(n){
-  if(n == 0){
-    return 0;
-  }else if(n == 1){
-    return 1;
-  }else{
-    return fib(n - 1) + fib(n - 2);
-  }
-}
-~~~
+<pre><code data-source="snippets/fib.js" data-trim class="hljs javascript"></code></pre>
 
 ---
 
 ## 所有権と move セマンティックス
 
-~~~rust
-let v = vec![1, 2, 3];
-println!("v[1] = {}", v[1]);
-let v2 = v;
-println!("v2[1] = {}", v2[1]);
-println!("v[1] = {}", v[1]);
-~~~
+<pre><code data-source="snippets/ownership.rs" data-trim class="hljs javascript"></code></pre>
 
 * ビルドエラーとなります（[デモ](https://is.gd/Iy1MlJ))
 * vec![1, 2, 3] の所有権が v から v2 へと移動してるためです
@@ -559,11 +415,7 @@ println!("v[1] = {}", v[1]);
 
 ###　ビルドエラーにならない場合もあります 
 
-~~~rust
-let x = 10;
-let y = x;
-println!("x = {}", x);
-~~~
+<pre><code data-source="snippets/ownership-copy-trait.rs" data-trim class="hljs rust"></code></pre>
 
 * i32 などは、束縛時に値をコピーします（[デモ](https://is.gd/iqsf3d))
 * Copy trait を実装しているもの
@@ -575,14 +427,7 @@ println!("x = {}", x);
 
 ### 関数呼び出しと所有権　
 
-~~~rust
-fn sum_vec(memo:Vec<i32>)->i32{}
-fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}",sum_vec(v));
-    println!("sum = {}",sum_vec(v));    
-}  
-~~~
+<pre><code data-source="snippets/ownership-transfer-by-function-call.rs" data-trim class="hljs rust"></code></pre>
 
 * ビルドエラーとなります（[デモ](https://is.gd/DocyHD))
 * 一度目の関数呼び出しで、所有権が移動してしまうためです
@@ -591,16 +436,7 @@ fn main() {
 
 ### 所有権を返すように変更すれば OK
 
-~~~rust
-fn sum_vec(memo:Vec<i32>)->(i32, Vec<i32>){}
-fn main() {
-    let v = vec![1, 2, 3];
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);   
-    let (sum, v) = sum_vec(v);
-    println!("sum = {}", sum);
-}
-~~~
+<pre><code data-source="snippets/ownership-restoring.rs" data-trim class="hljs rust"></code></pre>
 
 * 所有権を返り値として返せば、ビルドエラーがおきません
 * タプルを使えば、複数の値をまとめて返せます（[デモ](https://is.gd/eSwwXR))
@@ -609,14 +445,7 @@ fn main() {
 
 ## 参照
 
-~~~rust
-fn sum_vec(memo: &Vec<i32>)->i32{}
-fn main() {
-    let v = vec![1, 2, 3];
-    println!("sum = {}", sum_vec(&v));
-    println!("sum = {}", sum_vec(&v));    
-}
-~~~
+<pre><code data-source="snippets/reference.rs" data-trim class="hljs rust"></code></pre>
 
 * ```&``` をつけることで、値への参照を取得できます（[デモ](https://is.gd/bJhCDQ))
 * ```&型名```で、「その型への参照である」というアノテーションができます
@@ -627,15 +456,7 @@ fn main() {
 
 ### 参照と変更可能性
 
-~~~rust
-fn foo(v: &Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let v = vec![];
-    foo(&v);
-}    
-~~~
+<pre><code data-source="snippets/reference-immutable.rs" data-trim class="hljs rust"></code></pre>
 
 * 参照している値の変更はできません
 * ビルドエラーになります([デモ](https://is.gd/f8vsR1))
@@ -644,17 +465,7 @@ fn main(){
 
 ### 変更可能な参照
 
-~~~rust
-fn foo(v: &mut Vec<i32>){
-    v.push(5);
-}
-fn main(){
-    let mut v = vec![];
-    println!("v.len() = {}", v.len());
-    foo(&mut v);
-    println!("v.len() = {}", v.len());    
-} 
-~~~
+<pre><code data-source="snippets/reference-mutable.rs" data-trim class="hljs rust"></code></pre>
 
 * ```&mut``` で変更可能な参照を取得できます
 * ただし変更可能なオブジェクトに限ります
@@ -693,16 +504,7 @@ fn main() {
 
 ## パターンマッチ
 
-~~~rust
-let x = 5;
-let label = match x {
-    1 => "壱",
-    2 => "弐",
-    3 => "参",
-    _ => "その他"
-};
-println!("{} : {}", x, label);
-~~~
+<pre><code data-source="snippets/match/basic.rs" data-trim class="hljs rust"></code></pre>
 
 * match 式でパターンマッチが行えます（[デモ](https://is.gd/gXr0zW)）
 * ```_``` は、カバーされなかったものにマッチします
@@ -712,17 +514,7 @@ println!("{} : {}", x, label);
 
 ### 複数のパターン
 
-~~~rust
-let x = 5;
-let label = match x {
-    1 => "壱",
-    2 => "弐",
-    3 => "参",
-    4 | 5 | 6 | 7 | 8 | 9 => "一桁",
-    _ => "その他",
-};
-println!("{} : {}", x, label);
-~~~
+<pre><code data-source="snippets/match/union.rs" data-trim class="hljs rust"></code></pre>
 
 * ```|``` を使うと、複数のパターンをまとめられます
 
@@ -730,17 +522,7 @@ println!("{} : {}", x, label);
 
 ### デストラクチャリング
 
-~~~rust
-let x = (1, 5);
-let label = match x {
-    (0, 0) => "ゼロ",
-    (1, 0) | (0, 1) => "単位",
-    (1, _) => "x は 1",
-    (_, 1) => "y は 1",
-    _ => "その他"
-};
-println!("{}", label);
-~~~
+<pre><code data-source="snippets/match/destructuring.rs" data-trim class="hljs rust"></code></pre>
 
 * タプルのような構造を持ったものにもマッチできます
 
@@ -750,7 +532,7 @@ println!("{}", label);
 
 |型|説明|
 |--|---|
-|'static str|文字列リテラルの型|
+|'static str|文字列リテラル|
 |str|文字列のスライス|
 |String|変更可能な文字列型|
 
@@ -758,14 +540,7 @@ println!("{}", label);
 
 ### String と文字列の結合
 
-~~~rust
-let hello = "Hello"; 
-let world = "world!";
-let hello = hello.to_string();
-let mut buffer = new String();
-buffer = buffer + &hello + world;
-println!("{}", buffer);
-~~~
+<pre><code data-source="snippets/string/concatenation.rs" data-trim class="hljs rust"></code></pre>
 
 * ```to_string``` メソッドで、String へ変換できます
 * ```String + str``` もしくは ```String + &String``` で結合できます
@@ -775,10 +550,7 @@ println!("{}", buffer);
 
 ### str の作成
 
-~~~rust
-let dog = "hachiko";
-let hachi = &dog[0..5];
-~~~
+<pre><code data-source="snippets/str/slice.rs" data-trim class="hljs rust"></code></pre>
 
 ---
 
@@ -822,17 +594,7 @@ Hello, world!
 
 ### コマンドライン引数の取得
 
-~~~rust
-use std::env;
-
-fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() > 1 {
-        println!("{}", args[1]);
-    }
-}
-~~~
+<pre><code data-source="snippets/cat/arguments.rs" data-trim class="hljs rust"></code></pre>
 
 * [```std::env::args```](https://doc.rust-lang.org/std/env/fn.args.html) で引数をイテレーターとして取得できます
 * collect メソッドで、イテレーターをベクターに変換しています
@@ -840,21 +602,23 @@ fn main() {
 
 ----
 
+### コマンドライン引数付きで Cargo を実行するには
+
+~~~sh
+% cargo run -- src/main.rs
+    Finished debug [unoptimized + debuginfo] target(s) in 0.0 secs
+     Running `target/debug/commandline-argument src/main.rs`
+src/main.rs
+~~~
+
+* `--` オプションをつけた後に、プログラムに渡す引数を記述します
+* 上記の例では、`src/main.rs` がプログラムへ渡されます
+
+----
+
 ### ファイルの読み込み
 
-~~~rust
-use std::env;
-use std::io;
-use std::io::prelude::*;
-use std::fs::File;
-
-fn read_file(filename: String) -> Result<String, io::Error> {
-    let mut file = try!(File::open(filename));
-    let mut content = String::new();
-    try!(file.read_to_string(&mut content));
-    Ok(content)
-}
-~~~
+<pre><code data-source="snippets/cat/read_file.rs" data-trim class="hljs rust"></code></pre>
 
 * ```File::open```で ```File``` オブジェクト作り、ファイルにアクセスします
 * 成功 / 失敗が判定できるように、```Result``` 型を返します
@@ -863,18 +627,7 @@ fn read_file(filename: String) -> Result<String, io::Error> {
 
 ### 読み込んだファイルの出力
 
-~~~rust
-fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    if args.len() > 1 {
-        println!("{}", match read_file(args[1].clone()) {
-            Ok(content) => content,
-            Err(reason) => panic!(reason) 
-        });
-    }
-}
-~~~
+<pre><code data-source="snippets/cat/main.rs" data-trim class="hljs rust"></code></pre>
 
 * 成功 / 失敗の判断をパターンマッチを使って行なっています
 * ```Ok``` が成功時、```Err``` が失敗時です（```Result<T|E>```)
