@@ -1,8 +1,6 @@
 # Rust 初心者向けハンズオン
 
-Mozilla Japan 
-
-清水智公 (nshimizu@mozilla-japan.org)
+清水智公 (chikoski@gmail.com)
 
 ---
 
@@ -24,7 +22,6 @@ Mozilla Japan
 ![清水智公のアバター](img/chikoski.png)
 </div>
 
-* Mozilla Japan で Dev-rel やっています
 * プログラミング言語とサッカーが好きです 
 * [html5experts.jp](https://html5experts.jp/chikoski/) で記事をいくつか書いています
 * html5j Web プラットフォーム部 / ゲーム部
@@ -38,7 +35,7 @@ Mozilla Japan
 * 特徴
     * 手続き、抽象データ型、クロージャー
     * 静的型づけ、型推論
-    * 安全なポインター操作（ownership、move semantics、borrowing）
+    * 安全なポインター操作（ownership、move semantics、borrowing、lifetime）
     * 並列計算（メッセージパッシング、共有メモリ）
 
 ----
@@ -638,7 +635,40 @@ src/main.rs
 ### 発展させてみましょう！
 
 1. 複数のファイルを続けて出力する機能を実装しましょう
-2. -n オプションを実装しましょう (コマンドラインオプションの処理は [```getopts```](https://doc.rust-lang.org/getopts/getopts/index.html) を利用するとよいでしょう)
+2. -n オプションを実装しましょう 
+  * コマンドラインオプションの処理は [`getopts`](https://doc.rust-lang.org/getopts/getopts/index.html) を利用するとよいでしょう
+  * [`clap`](https://docs.rs/clap/2.20.5/clap/) も利用できます
+
+
+---
+
+## Rustでのエラーハンドリング
+
+<pre><code data-source="samples/option/src/main.rs" data-trim class="hljs rust"></code></pre>
+
+* エラーハンドリングは、Option 型もしくは Result 型を用いて行います
+* Option 型：値が存在しているかどうかを判定するのに用います
+* Result 型：処理の成功 / 失敗を判定する場合に用います
+
+----
+
+### Option 型
+
+<pre><code data-source="samples/option/src/main.rs" data-trim class="hljs rust"></code></pre>
+
+* 値がない場合を表す `None` と、ある場合を表す `Some` があります
+* 上記のようにパターンマッチを用いて、どちらの場合かを判定します
+* Some は内部に処理の結果得られた値を持っています。デストラクチャリングか `unwrap` メソッドをで、その値を取得できます
+
+----
+
+### Result 型
+
+<pre><code data-source="snippets/cat/main.rs" data-trim class="hljs rust"></code></pre>
+
+* 成功時を表す `Ok` と、失敗を表す `Err` の 2 つの値を持ちます
+* `Ok` も `Err` も値を内部に持っています
+* デストラクチャリングか `unwrap` メソッドで、その値を取得できます
 
 ---
 
