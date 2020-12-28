@@ -36,26 +36,26 @@ edition = "2018"
 
 * 縦方向のスライドには、補足や詳細な情報がのっています
 
-## 本日の内容
+### 本日の内容
 
 0. Rust についての簡単な紹介
 1. FizzBuzz を作ろう
 2. テキストファイルを表示するプログラムを作ろう
 3. 2 を改造して、grep コマンドを作ろう
 
-## Rust とは
+### Rust とは
 
 * システムプログラミング用の言語としてスタートしました
 * 信頼性が高く、パフォーマンスの出るプログラムを書けるように設計されています
 * 組み込みからWeb まで、さまざまな場面で利用されています
 
-### Rust の採用例
+#### Rust の採用例
 
 * [Friends of Rust](https://prev.rust-lang.org/en-US/friends.html) / [Production](https://www.rust-lang.org/production)
 * [Awesome Rust](https://github.com/awesome-rust-com/awesome-rust)
 * 日本の例：LINE、Voyage group、CADDi、Cookpad、Dwango、Forcia、etc
 
-### ドキュメント
+#### ドキュメント
 
 * [The book](https://doc.rust-lang.org/book/) / [日本語版](https://doc.rust-jp.rs/book-ja/)
 * [Rust by Example](https://doc.rust-lang.org/rust-by-example/) / [日本語版](https://doc.rust-jp.rs/rust-by-example-ja/)
@@ -67,7 +67,7 @@ edition = "2018"
 * ただし、次の場合は数字の代わりに指定された文字列を出力します
   * 数字が 3 の倍数の場合、Fizz を出力します
   * 数字が 5 の倍数の場合、Buzz を出力します
-  * 数字が 3 の倍数で、しかも 5 の倍数でもある場合には、FizzBuzz を出力します
+  * 数字が 3 の倍数で、5 の倍数でもある場合には、FizzBuzz を出力します
 
 
 ### プロジェクトの作成
@@ -284,7 +284,7 @@ fn fizzbuzz(n: u32) -> String{
 #### 関数呼び出し
 
 * 実引き数をを与えて関数を呼びます
-* `n` や `output` に対して、型を明記していないのは、コンパイラーが型推論を行うためです
+* 型を明記していないのは、コンパイラーが型推論を行うためです
 
 ~~~rust
 fn main() {
@@ -338,7 +338,7 @@ fn main() {
 * FizzBuzz はデータ変換を行う関数として捉えることもできます
 * 例：数値の範囲 -> 文字列の配列
 * 一つ一つの数値を、文字列に変換する関数は fizzbuzz として用意されています
-* これを上手に使って、関数プログラミング的なアプローチで FizzBuzz を書き直します。
+* これを使って、関数プログラミング的なアプローチで FizzBuzz を書き直します
 
 #### FizzBuzz: map メソッド
 
@@ -363,7 +363,8 @@ fn main() {
 
 ~~~rust
 fn main() {
-  let output = (1..20).map(fizzbuzz).fold("".to_string(), |accum, line|{
+  let output = (1..20).map(fizzbuzz)
+      .fold("".to_string(), |accum, line|{
     format!("{}\n{}", accum, line)
   });
   println!("{}", output);
