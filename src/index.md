@@ -46,7 +46,7 @@ edition = "2018"
 ### Rust とは
 
 * システムプログラミング用の言語としてスタートしました
-* 信頼性が高く、パフォーマンスの出るプログラムを書けるように設計されています
+* 信頼性が高く、性能の良いプログラムを書けるように設計されています
 * 組み込みからWeb まで、さまざまな場面で利用されています
 
 #### Rust の採用例
@@ -164,6 +164,19 @@ fn main() {
     };
     println!("{}", output);
   }
+}
+~~~
+
+#### `format`
+
+* [`format`](https://doc.rust-lang.org/std/fmt/fn.format.html) は第 1 引数に指定した書式に、第 2 引数以降の値を埋め込んだ文字列を返すマクロです
+* 次の例では、`Hello, {}` の `{}` 部分に、`name` の値が埋め込まれます
+
+~~~rust
+fn main(){
+  let name = "World";
+  let output = format!("Hello, {}!", name);
+  println!("{}", output);
 }
 ~~~
 
@@ -1087,3 +1100,76 @@ fn main(){
   mygrep.run();
 }
 ~~~
+
+#### `self` を引数にとる関数
+
+* [`self`](https://doc.rust-lang.org/std/keyword.self.html) を引数にとる関数をデータ構造に実装することで、そのデータ構造にメソッドを追加できます
+* メソッド呼び出し時、`self` はメソッドのレシーバーに束縛されます
+* 次の例では、`Peano` という構造体に `succ` というメソッドを追加しています
+
+~~~rust
+struct Peano{
+  value: u32
+}
+impl Peano{
+  fn zero() -> Peano{ 
+    Peano{value: 0}
+  }
+  fn succ(&self) -> Peano{
+    Peano{value: self.value + 1}
+  }
+}
+fn main(){
+  let zero = Peano::zero();
+  let one = zero.succ();
+  println!("zero = {}, one = {}", zero.value, one.value);
+}
+~~~
+
+#### `self` か `&self` か
+
+* メソッドの第 1 引数は、`self` もしくは `&self` となります
+* 前者ではメソッド呼び出し時に、自身の所有権が仮引数に移動します。後者では、所有権が移動しません
+
+~~~rust
+struct Peano{
+  value: u32
+}
+impl Peano{
+  fn zero() -> Peano{ 
+    Peano{value: 0}
+  }
+  fn succ(self) -> Peano{
+    Peano{value: self.value + 1}
+  }
+}
+fn main(){
+  let zero = Peano::zero();
+  let one = zero.succ();
+}
+~~~
+
+#### メソッド呼び出しによる所有権の移動
+
+* `succ` を呼び出した時点で `zero` に束縛されていた値の所有権が移動しています
+* 一方 `println!` では所有権の移動した値を参照しています
+* そのため以下の例は、コンパイルエラーとなります
+
+~~~rust
+struct Peano{
+  value: u32
+}
+impl Peano{
+  fn zero() -> Peano{ 
+    Peano{value: 0}
+  }
+  fn succ(self) -> Peano{
+    Peano{value: self.value + 1}
+  }
+}
+fn main(){
+  let zero = Peano::zero();
+  let one = zero.succ();
+  println!("zero = {}, one = {}", zero.value, one.value);
+}
+~~~  
