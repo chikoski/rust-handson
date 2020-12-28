@@ -15,8 +15,8 @@
     "markdown-it-header-sections": "^1.0.0"
   },
   "scripts": {
-    "build": "npx @11ty/eleventy --input ./src",
-    "dev": "npx @11ty/eleventy --input ./src --serve --watch"
+    "build": "npx @11ty/eleventy --input ./src --output ./docs",
+    "dev": "npx @11ty/eleventy --input ./src --serve --watch --output ./docs"
   },
   "devDependencies": {}
 }

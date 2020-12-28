@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="ja-JP">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rust ハンズオン</title>
+  <link rel="stylesheet" href="../assets/prism.css">
+  <link rel="stylesheet" href="../assets/reveal.css">
+  <link rel="stylesheet" href="../assets/theme/white.css">
+  <script type="module">
+    import Reveal from '../assets/reveal.esm.js';
+    Reveal.initialize();
+  </script>
+</head>
+
+<body>
+  <div class="reveal">
+    <div class="slides">
+<section>
+<h1>Rust ハンズオン</h1>
+<p><a href="https://twitter.com/chikoski">chikoski@</a></p>
+</section>
+<section>
+<h2>このハンズオンについて</h2>
+<ul>
+<li>Rust とは？から始まって、基本的な文法をカバーします</li>
+<li>自分なりの grep コマンドを実装します</li>
+<li>自分のペースで、できるところまでやりましょう</li>
+</ul>
+</section>
+<section>
+<h3>今回の成果物：grep</h3>
+<ul>
+<li>テキストファイルから、パターンに一致する行を抜き出すコマンド</li>
+<li>使い方：<code>grep オプション パターン ファイル名</code></li>
+<li>次の例では、<code>Cargo.toml</code> の中から、<code>2018</code> という文字列が含まれる行を抜き出しています：</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% grep 2018 Cargo.toml<br>edition = "2018"</code></pre>
+</section>
+<section>
+<section>
+<h3>資料の使い方</h3>
+<ul>
+<li>資料はスライド形式になっています</li>
+<li>横方向に進んでいけば、自分なりの grep を実装できます</li>
+<li>縦方向にも進める場合もあります</li>
+</ul>
+</section>
+<section>
+<h4>縦方向のスライドは補足です</h4>
+<ul>
+<li>縦方向のスライドには、補足や詳細な情報がのっています</li>
+</ul>
+</section>
+</section>
+<section>
+<h3>本日の内容</h3>
+<ol start="0">
+<li>Rust についての簡単な紹介</li>
+<li>FizzBuzz を作ろう</li>
+<li>テキストファイルを表示するプログラムを作ろう</li>
+<li>2 を改造して、grep コマンドを作ろう</li>
+</ol>
+</section>
+<section>
+<section>
+<h3>Rust とは</h3>
+<ul>
+<li>システムプログラミング用の言語としてスタートしました</li>
+<li>信頼性が高く、パフォーマンスの出るプログラムを書けるように設計されています</li>
+<li>組み込みからWeb まで、さまざまな場面で利用されています</li>
+</ul>
+</section>
+<section>
+<h4>Rust の採用例</h4>
+<ul>
+<li><a href="https://prev.rust-lang.org/en-US/friends.html">Friends of Rust</a> / <a href="https://www.rust-lang.org/production">Production</a></li>
+<li><a href="https://github.com/awesome-rust-com/awesome-rust">Awesome Rust</a></li>
+<li>日本の例：LINE、Voyage group、CADDi、Cookpad、Dwango、Forcia、etc</li>
+</ul>
+</section>
+<section>
+<h4>ドキュメント</h4>
+<ul>
+<li><a href="https://doc.rust-lang.org/book/">The book</a> / <a href="https://doc.rust-jp.rs/book-ja/">日本語版</a></li>
+<li><a href="https://doc.rust-lang.org/rust-by-example/">Rust by Example</a> / <a href="https://doc.rust-jp.rs/rust-by-example-ja/">日本語版</a></li>
+<li><a href="https://rust-cli.github.io/book/index.html">Command Line Applications in Rust</a></li>
+</ul>
+</section>
+</section>
+<section>
+<h2>FizzBuzz を作ろう</h2>
+<ul>
+<li>1 から 100 までの数値を出力します</li>
+<li>ただし、次の場合は数字の代わりに指定された文字列を出力します
+<ul>
+<li>数字が 3 の倍数の場合、Fizz を出力します</li>
+<li>数字が 5 の倍数の場合、Buzz を出力します</li>
+<li>数字が 3 の倍数で、5 の倍数でもある場合には、FizzBuzz を出力します</li>
+</ul>
+</li>
+</ul>
+</section>
+<section>
+<section>
+<h3>プロジェクトの作成</h3>
+<ul>
+<li>Rust のプロジェクトの操作には、cargo コマンドを使います</li>
+<li><code>cargo new</code> を実行すると、プロジェクトが作成されます</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo new fizzbuzz<br>     Created binary (application) `fizzbuzz` package</code></pre>
+</section>
+<section>
+<h4>プロジェクトのフォルダ構成</h4>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">fizzbuzz<br>├── Cargo.toml<br>└── src<br>   └── main.rs</code></pre>
+</section>
+</section>
+<section>
+<h3>プロジェクトのビルドと実行</h3>
+<ul>
+<li><code>cargo build</code> でビルドします</li>
+<li><code>cargo run</code> で、ビルドしたプログラムを実行します
+<ul>
+<li>ビルドされていない場合は、ビルドも行います</li>
+<li>標準ではデバッグビルドを実行します</li>
+</ul>
+</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cd fizzbuzz<br>% cargo run<br>   Compiling fizzbuzz v0.1.0 (/Users/chikoski/fizzbuzz)<br>    Finished dev [unoptimized + debuginfo] target(s) in 0.77s<br>     Running `target/debug/fizzbuzz`<br>Hello, world!</code></pre>
+</section>
+<section>
+<h3>main.rs</h3>
+<ul>
+<li>main 関数が定義されています</li>
+<li>この関数（main）がエントリーポイントです</li>
+<li><a href="https://doc.rust-lang.org/std/macro.println.html">println!</a> は文字列を出力し、最後に改行するマクロです</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"Hello, world!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>繰り返し：while 文</h3>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/keyword.let.html"><code>let</code> は変数に値を束縛するキーワード</a>です</li>
+<li>デフォルトでは、変数の値を変更できません</li>
+<li>値を変更する変数には、<a href="https://doc.rust-lang.org/std/keyword.mut.html"><code>mut</code> キーワード</a>をつけます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> <span class="token keyword">mut</span> counter <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span><br>  <span class="token keyword">while</span> counter <span class="token operator">&lt;</span> <span class="token number">10</span><span class="token punctuation">{</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"Hello, world!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    counter <span class="token operator">+=</span> <span class="token number">1</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>イテレーターを使った書き換え</h3>
+<ul>
+<li><code>0..10</code> は 0 以上 10 未満の<a href="https://doc.rust-lang.org/std/ops/struct.Range.html">範囲を表すオブジェクト</a>を定義します</li>
+<li>このオブジェクトは、<a href="https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF">イテレーター</a>としての性質を持っています</li>
+<li>そのため <a href="https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF">for 文</a>で範囲に含まれる整数を列挙できます</li>
+<li>下記では、列挙された値を使わないので、<code>_</code> を利用しています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> _ <span class="token keyword">in</span> <span class="token number">0</span><span class="token punctuation">..</span><span class="token number">10</span><span class="token punctuation">{</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"Hello, world!"</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>条件分岐：if 式</h3>
+<ul>
+<li>Rust での if は式です。つまり評価値を持ちます</li>
+<li>実行したブロックで最後に評価した式の値が、if 式の評価値となります</li>
+<li>ブロックの最後の式に <code>;</code> がついていないことがポイントです</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">0</span><span class="token punctuation">..</span><span class="token number">10</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>      <span class="token string">"FizzBuzz"</span><br>    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>      <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<section>
+<h3>コンパイル時の型チェック</h3>
+<ul>
+<li>コンパイル時には型チェックが行われます</li>
+<li>次の例では、if 節の評価値が <code>str</code> 型なのに対し、else の評価値が <code>String</code> 型であることが原因でコンパイルエラーとなっています</li>
+<li><code>&quot;FizzBuzz&quot;</code> に対して、<code>to_string</code> メソッドを呼ぶように変更することで修正できます</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">error[E0308]: `if` and `else` have incompatible types<br> --> src/main.rs:6:9<br>  |<br>3 |         let output = if n % 15 == 0{<br>  |  ____________________-<br>4 | |         "FizzBuzz"<br>  | |         ---------- expected because of this<br>5 | |       }else{<br>6 | |         format!("{}", n)<br>  | |         ^^^^^^^^^^^^^^^^ expected `&amp;str`, found struct `String`<br>7 | |       };<br>  | |_______- `if` and `else` have incompatible types<br>  |</code></pre>
+</section>
+<section>
+<h4>String と str</h4>
+<ul>
+<li><code>String</code> は文字列を表すオブジェクトです</li>
+<li><code>str</code> は文字列のスライスを表す値です</li>
+<li><code>to_string</code> メソッドで、<code>String</code> オブジェクトへ変換できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> name <span class="token operator">=</span> <span class="token string">"World"</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Hello, {}!"</span><span class="token punctuation">,</span> name<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">;</span><br>   <br><span class="token keyword">let</span> slice_of_message <span class="token operator">=</span> <span class="token operator">&amp;</span>message<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">..</span><span class="token number">5</span><span class="token punctuation">]</span><span class="token punctuation">;</span><br><span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> slice_of_message<span class="token punctuation">)</span><span class="token punctuation">;</span><br><br><span class="token keyword">let</span> another_string <span class="token operator">=</span> slice_of_message<span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> another_string<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>コンパイルエラーの修正</h4>
+<ul>
+<li>if 節の評価値の型が String となるように修正します</li>
+<li><code>to_string</code> メソッドを呼ぶことで、String 型の <code>&quot;FizzBuzz&quot;</code> を作成できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">0</span><span class="token punctuation">..</span><span class="token number">10</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>      <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>      <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>より詳しくコンパイルエラーについて知りたい場合は</h4>
+<ul>
+<li>rustc に --explain オプションをつけて実行すると、より詳しい解説を読めます</li>
+<li>次の例では、E0308 のエラーについて、解説を読みます</li>
+<li>同じ解説を <a href="https://doc.rust-lang.org/error-index.html">Web でも読めます</a></li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% rustc --explain E0308<br>Expected type did not match the received type.<br><br>Erroneous code examples:</code></pre>
+</section>
+</section>
+<section>
+<h3>FizzBuzz: 手続き的なバージョン</h3>
+<ul>
+<li>以下は、手続き的に書いた FizzBuzz の例です</li>
+<li>これを少しずつ改変し、Rust の柔軟性をみていきます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>      <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>      <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">3</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>      <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>      <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>    <span class="token punctuation">}</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<section>
+<h3>関数への切り出し</h3>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/keyword.fn.html"><code>fn</code> キーワード</a> で関数を定義できます</li>
+<li><code>()</code> 内に引数のリストを、<code>-&gt;</code> の後に返り値の型を書きます</li>
+<li>下記は、FizzBuzz の数値から文字列への変換を、関数に切り出した例です</li>
+<li><a href="https://doc.rust-lang.org/std/primitive.u32.html"><code>u32</code></a> を String への変換として実装しています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token keyword">u32</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">String</span><span class="token punctuation">{</span><br>  <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">3</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>関数呼び出し</h4>
+<ul>
+<li>実引き数をを与えて関数を呼びます</li>
+<li>型を明記していないのは、コンパイラーが型推論を行うためです</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>単体テスト</h4>
+<ul>
+<li><code>#[test]</code> とアノテーションされた関数は、テスト用の関数として処理されます</li>
+<li>次の例では、<code>fizzbuzz</code> の振る舞いをテストしています</li>
+<li><code>cargo test</code> でテストを実行できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizzbuzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+</section>
+<section>
+<h3>変換部分を関数に切り出した結果</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token keyword">u32</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">String</span><span class="token punctuation">{</span><br>  <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">3</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<section>
+<h3>FizzBuzz：関数プログラミング的なアプローチ</h3>
+<ul>
+<li>FizzBuzz はデータ変換を行う関数として捉えることもできます</li>
+<li>例：数値の範囲 -&gt; 文字列の配列</li>
+<li>一つ一つの数値を、文字列に変換する関数は fizzbuzz として用意されています</li>
+<li>これを使って、関数プログラミング的なアプローチで FizzBuzz を書き直します</li>
+</ul>
+</section>
+<section>
+<h4>FizzBuzz: map メソッド</h4>
+<ul>
+<li>コレクション中の要素一つ一つに関数を適用して、別のコレクションを作る map と呼ばれる操作は、関数プログラミングで良く利用されます</li>
+<li>Rust のイテレーターにも <code>map</code> メソッドは用意されています</li>
+<li>このメソッドは、各要素に、引数に与えた関数を適用した結果を持つイテレーターを返します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> output <span class="token keyword">in</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>fizzbuzz<span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br> <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>クロージャー：関数の一種</h4>
+<ul>
+<li>クロージャーは関数の一種で、定義された時にアクセス可能な変数であれば関数本体内で利用できる、という点が特徴です</li>
+<li>無名関数やラムダ、といった名前でクロージャーを提供している言語もあります</li>
+<li>Rust でもクロージャーは利用できます。下記の例では、 <code>fold</code> メソッドの第 2 引数でクロージャーを定義しています</li>
+<li>仮引数リストは <code>|</code> と <code>|</code> の間に記述します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>fizzbuzz<span class="token punctuation">)</span><br>      <span class="token punctuation">.</span><span class="token function">fold</span><span class="token punctuation">(</span><span class="token string">""</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token closure-params"><span class="token closure-punctuation punctuation">|</span>accum<span class="token punctuation">,</span> line<span class="token closure-punctuation punctuation">|</span></span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}\n{}"</span><span class="token punctuation">,</span> accum<span class="token punctuation">,</span> line<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+</section>
+<section>
+<h3>関数プログラミング的な FizzBuzz</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token keyword">u32</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">String</span><span class="token punctuation">{</span><br>  <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">3</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>fizzbuzz<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">fold</span><span class="token punctuation">(</span><span class="token string">""</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token closure-params"><span class="token closure-punctuation punctuation">|</span>accum<span class="token punctuation">,</span> line<span class="token closure-punctuation punctuation">|</span></span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}\n{}"</span><span class="token punctuation">,</span> accum<span class="token punctuation">,</span> line<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>FizzBuzz のまとめ</h3>
+<ul>
+<li>基本的な文法を確認しました</li>
+<li>手続き的にも、関数型的にも書けます</li>
+<li>コンパイラーを良いレビュワーとして付き合っていけると良いと思います</li>
+</ul>
+</section>
+<section>
+<h2>テキストファイルを出力するプログラムを作ろう</h2>
+<ol>
+<li>新しいプロジェクトを作ります</li>
+<li>決まったファイルの中身を出力するプログラムを作ります</li>
+<li>コマンドライン引数で、読むファイルを指定できるように変更します</li>
+</ol>
+</section>
+<section>
+<h3>プロジェクトの作成</h3>
+<ul>
+<li><code>mygrep</code> という名前のプロジェクトを作ります</li>
+<li>次の例では、ホームディレクトリにプロジェクトを作成しています</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cd<br>% cargo new mygrep</code></pre>
+</section>
+<section>
+<h3>自分自身を出力するプログラム</h3>
+<ul>
+<li>手始めに自分自身を出力するプログラムを作成します</li>
+<li><a href="https://doc.rust-lang.org/std/fs/fn.read_to_string.html"><code>std::fs:read_to_string</code></a> は、引数で指定したパスから文字列として内容を読み込みます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> path <span class="token operator">=</span> <span class="token string">"./src/main.rs"</span><span class="token punctuation">;</span><br>  <br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">print!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<section>
+<h3>ファイル読み込みには失敗がつきもの</h3>
+<ul>
+<li>Rust では、ある操作の成否を <a href="https://doc.rust-lang.org/std/result/enum.Result.html"><code>Result</code></a> を使って表現します</li>
+<li><code>Result</code> は成功を表す <code>Ok</code> と エラーを表す <code>Err</code> から成る enum です</li>
+<li><code>is_ok</code> メソッドで、<code>Ok</code> か <code>Err</code> かを判別できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token keyword">if</span> result<span class="token punctuation">.</span><span class="token function">is_ok</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token string">"Success"</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token string">"Fail"</span><br>  <span class="token punctuation">}</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>成果物とエラーの理由</h4>
+<ul>
+<li><code>Ok</code> は成果物を値として持てます。* 同様に <code>Err</code> も、エラーの理由を値として持てます</li>
+<li>成果物を表すデータ型や、エラーの理由を表すデータ型は、プログラムによって異なります</li>
+<li>そのため <code>Result</code> を扱う際には、成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します</li>
+<li>次の例では、成果物の型に <code>u32</code> を指定し、エラーの理由は <code>String</code> で与えられるとしています</li>
+</ul>
+<pre><code>let result: Result&lt;u32, String&gt; = Ok(1);
+</code></pre>
+</section>
+<section>
+<h4>成果物の取り出し方（unwrap を使う場合）</h4>
+<ul>
+<li><code>unwrap</code> メソッドを使って、成果物（もしくはエラーの理由）を取り出せます</li>
+<li>次の例では、成功した場合に <code>unwrap</code> メソッドを使って成果物を取り出しています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token keyword">if</span> result<span class="token punctuation">.</span><span class="token function">is_ok</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Result = {}"</span><span class="token punctuation">,</span> result<span class="token punctuation">.</span><span class="token function">unwrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token string">"Fail"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>成果物の取り出し方（パターンマッチを使う場合）</h4>
+<ul>
+<li>条件分岐と <code>unwrap</code> との組み合わは、パターンマッチを使って簡略化できます</li>
+<li>パターンマッチは <a href="https://doc.rust-lang.org/std/keyword.match.html">match 式</a> として記述できます</li>
+<li>パターンの一部分を、変数に束縛することで、<code>Ok</code> / <code>Err</code> から値を取り出せます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token keyword">match</span> result <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>value<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Result = {}"</span><span class="token punctuation">,</span> value<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>_<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token string">"Fail"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>Result のエイリアス：std::io::Result</h4>
+<ul>
+<li>エラーの理由を表す型が決まっている、といった理由で Result のエイリアスが作られることは良くあります</li>
+<li>代表例は、<a href="https://doc.rust-lang.org/std/io/type.Result.html">std::io::Result</a> です</li>
+<li>次のように、エラーを std::io::Error で表すと定めています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">type</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token class-name">T</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token class-name">T</span><span class="token punctuation">,</span> <span class="token namespace">std<span class="token punctuation">::</span>io<span class="token punctuation">::</span></span><span class="token class-name">Error</span><span class="token operator">></span><span class="token punctuation">;</span></code></pre>
+</section>
+</section>
+<section>
+<h3>内容を出力する部分を関数へ切り出し</h3>
+<ul>
+<li>出力するファイルを指定できるようにするための準備として、内容を出力する部分を関数に切り出します</li>
+<li>ファイルのパスを <code>String</code> で受け取り、<code>()</code> を返す関数として定義しました</li>
+<li>これにあわせて <code>path</code> の型が <code>String</code> になっている点に注意してください</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">print!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> path <span class="token operator">=</span> <span class="token string">"./src/main.rs"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>出力するファイルの指定方法</h3>
+<ul>
+<li>出力するファイルを、コマンドライン引数として指定することとします</li>
+<li>実行のイメージは次のようになります</li>
+<li>この例では <code>src/main.rs</code> を出力します</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo run src/main.rs</code></pre>
+</section>
+<section>
+<h3>コマンドライン引数の取得</h3>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/env/fn.args.html"><code>std::env::args()</code></a> は、コマンドライン引数を String として保持するイテレーターを返します</li>
+<li><a href="https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.nth"><code>nth</code></a> メソッドで、n 番目の要素を取得できます</li>
+<li><code>nth</code> メソッドは <code>Option</code> という値を返します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> arguments <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">match</span> arguments<span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token class-name">Some</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">None</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"No path is specified"</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<section>
+<h3>Option: null かもしれない値の表現</h3>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/option/index.html">Option</a> は存在するかもしれないし、しないかもしれないといった値を表現します</li>
+<li>下記の例では、1 番目のコマンドライン引数を取得しています</li>
+<li>この値が存在するかどうかは、ユーザーの入力に依存します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> arguments <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">match</span> arguments<span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token class-name">Some</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">None</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"No path is specified"</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>Option の値：Some と None</h4>
+<ul>
+<li>Option は Result と良く似た性質をしています</li>
+<li>公式ドキュメントでは、Result はリッチな Option として紹介されています</li>
+<li><a href="https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some">値が存在する場合、Option の値は <code>Some</code></a> となります。<a href="https://doc.rust-lang.org/std/option/enum.Option.html#variant.None">値が存在しない場合の値は <code>None</code></a> です</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> arguments <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">match</span> arguments<span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token class-name">Some</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">None</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"No path is specified"</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>Option からの値取得</h4>
+<ul>
+<li>Some は、実際の値を内部に保持しています</li>
+<li>Option は Result と同様に、<code>unwrap</code> メソッドがあります。これを利用して実際の値を取得できます</li>
+<li>また下記のようにパターンマッチを利用しても、保持されている値を取得できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> arguments <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">match</span> arguments<span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token class-name">Some</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">None</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"No path is specified"</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+</section>
+<section>
+<h3>ここまででできたプログラム</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">print!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> arguments <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">match</span> arguments<span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token class-name">Some</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">None</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"No path is specified"</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h2>grep への拡張</h2>
+<ul>
+<li>ここまでで、指定したファイルの中身を文字列として出力するプログラムができました。これを拡張して grep コマンドを実装します</li>
+<li>grep には 2 つのコマンドライン引数があります。1 つ目がパターン、2 つめがファイルパスです</li>
+<li>次のれいでは、version がパターンで、Cargo.toml がファイルパスとなります</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% grep version Cargo.toml<br>version = "0.1.0"</code></pre>
+</section>
+<section>
+<h3>run を変更して grep を実装します</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">for</span> line <span class="token keyword">in</span> content<span class="token punctuation">.</span><span class="token function">lines</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token keyword">if</span> line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>pattern<span class="token punctuation">.</span><span class="token function">as_str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>      <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">,</span> pattern<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>パターンとファイルパスの取得</h3>
+<ul>
+<li><code>std::env::args</code> の返り値はイテレーターとしての性質を持っています</li>
+<li><code>nth</code> メソッドを呼ぶたびに、内部の状態が変わります</li>
+<li>状態変化による面倒を避けるため、都度 <code>std::env::args</code> を呼んでいます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> pattern <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> path <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">if</span> pattern<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> path<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token function">run</span><span class="token punctuation">(</span>path<span class="token punctuation">,</span> pattern<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>ユーザー定義型</h3>
+<ul>
+<li>今後の発展のために、<code>path</code> と <code>pattern</code> をまとめたデータ構造を作ります</li>
+<li>データ構造は <a href="https://doc.rust-lang.org/std/keyword.struct.html"><code>struct</code> キーワード</a>を使って定義できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>impl：データ構造に振る舞いを与えるキーワード</h3>
+<ul>
+<li><a href="https://doc.rust-lang.org/std/keyword.impl.html"><code>impl</code> キーワード</a>を使うと、データ構造に振る舞いを定義できます</li>
+<li>例えば、データ構造を作成する関数 new は次のように定義できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">impl</span> <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token keyword">fn</span> <span class="token function-definition function">new</span><span class="token punctuation">(</span>path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>    <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>      path<span class="token punctuation">,</span> <br>      pattern<span class="token punctuation">,</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>MyGrep 型を使った書き換え</h3>
+<ul>
+<li>定義した MyGrep 型を使うようにコードを書き換えます</li>
+<li>書き換えるのは、main と run の 2 関数です</li>
+<li>変数名とフィールド名を <code>.</code> でつなぐとフィールドの値を参照できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">,</span> mygrep<span class="token punctuation">.</span>pattern<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> pattern <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> path <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>  <span class="token keyword">if</span> pattern<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> path<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">new</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">unwrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> pattern<span class="token punctuation">.</span><span class="token function">unwrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>ここまでの状態</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">impl</span> <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token keyword">fn</span> <span class="token function-definition function">new</span><span class="token punctuation">(</span>path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>    <span class="token class-name">MyGrep</span><span class="token punctuation">{</span><br>      path<span class="token punctuation">,</span> <br>      pattern<span class="token punctuation">,</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">for</span> line <span class="token keyword">in</span> content<span class="token punctuation">.</span><span class="token function">lines</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token keyword">if</span> line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>pattern<span class="token punctuation">.</span><span class="token function">as_str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>      <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">,</span> mygrep<span class="token punctuation">.</span>pattern<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> pattern <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> path <span class="token operator">=</span> <span class="token namespace">std<span class="token punctuation">::</span>env<span class="token punctuation">::</span></span><span class="token function">args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">nth</span><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><br>  <span class="token keyword">if</span> pattern<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">&amp;&amp;</span> path<span class="token punctuation">.</span><span class="token function">is_some</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token function">run</span><span class="token punctuation">(</span><span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">new</span><span class="token punctuation">(</span>path<span class="token punctuation">.</span><span class="token function">unwrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> pattern<span class="token punctuation">.</span><span class="token function">unwrap</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>コマンドラインオプションに対応しよう</h3>
+<ul>
+<li>grep は <code>-n</code> オプションをつけると、行番号をつけて結果を出力します。この機能を実装します</li>
+<li>オプションの解析には、ライブラリを利用することします</li>
+<li>ライブラリのことを、Rust では crate（クレート）と呼びます</li>
+</ul>
+</section>
+<section>
+<h3>クレートの追加</h3>
+<ul>
+<li>今回は <a href="https://github.com/TeXitoi/structopt">structopt</a> という crate を使います</li>
+<li>Rust のライブラリは、<a href="https://crates.io/">crates.io</a> というレポジトリにまとめられています</li>
+<li>Cargo.toml の dependencies に、使用する crate を追記することで利用できるようになります</li>
+</ul>
+<pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">dependencies</span><span class="token punctuation">]</span><br><span class="token key property">structopt</span> <span class="token punctuation">=</span> <span class="token string">"0.3.21"</span></code></pre>
+</section>
+<section>
+<h3>コマンドラインオプションの解析</h3>
+<ul>
+<li>structopt を使うと、コマンドラインオプションの解析を宣言的に記述できます</li>
+<li>定義したデータ構造の各フィールドにアトリビュートを追加することで、コマンドラインオプションとの対応関係を記述します</li>
+<li>以下は、MyGrep 型にアトリビュートを追加した例です</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">use</span> <span class="token namespace">structopt<span class="token punctuation">::</span></span><span class="token class-name">StructOpt</span><span class="token punctuation">;</span><br><br><span class="token attribute attr-name">#[derive(StructOpt)]</span><br><span class="token attribute attr-name">#[structopt(name=<span class="token string">"mygrep"</span>)]</span><br><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"PATTERN"</span>)]</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"FILE"</span>)]</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>コマンドラインオプションの解析（つづき）</h3>
+<ul>
+<li><code>MyGrep::from_args</code> は structopt によって追加されました</li>
+<li>この関数が、コマンドラインオプションの解析と、MyGrep オブジェクトを作成します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> mygrep <span class="token operator">=</span> <span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">from_args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>ここまでの状態（Cargo.toml）</h3>
+<pre class="language-toml"><code class="language-toml"><span class="token punctuation">[</span><span class="token table class-name">package</span><span class="token punctuation">]</span><br><span class="token key property">name</span> <span class="token punctuation">=</span> <span class="token string">"mygrep"</span><br><span class="token key property">version</span> <span class="token punctuation">=</span> <span class="token string">"0.1.0"</span><br><span class="token key property">authors</span> <span class="token punctuation">=</span> <span class="token punctuation">[</span><span class="token string">"自分のなまえ"</span><span class="token punctuation">]</span><br><span class="token key property">edition</span> <span class="token punctuation">=</span> <span class="token string">"2018"</span><br><br><span class="token comment"># See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html</span><br><br><span class="token punctuation">[</span><span class="token table class-name">dependencies</span><span class="token punctuation">]</span><br><span class="token key property">structopt</span> <span class="token punctuation">=</span> <span class="token string">"0.3.21"</span></code></pre>
+</section>
+<section>
+<section>
+<h3>ここまでの状態（main.rs）</h3>
+<ul>
+<li><code>MyGrep::new</code> は使わなくなったので、削除しました</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">use</span> <span class="token namespace">structopt<span class="token punctuation">::</span></span><span class="token class-name">StructOpt</span><span class="token punctuation">;</span><br><br><span class="token attribute attr-name">#[derive(StructOpt)]</span><br><span class="token attribute attr-name">#[structopt(name=<span class="token string">"mygrep"</span>)]</span><br><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"PATTERN"</span>)]</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"FILE"</span>)]</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span> pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">for</span> line <span class="token keyword">in</span> content<span class="token punctuation">.</span><span class="token function">lines</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token keyword">if</span> line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>pattern<span class="token punctuation">.</span><span class="token function">as_str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>      <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token punctuation">}</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>content<span class="token punctuation">,</span> mygrep<span class="token punctuation">.</span>pattern<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> mygrep <span class="token operator">=</span> <span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">from_args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>use：名前空間へのシンボルの追加</h4>
+</section>
+<section>
+<h4>Derive アトリビュート：コードの自動的な追加</h4>
+</section>
+</section>
+<section>
+<h3><code>-n</code> オプションの追加</h3>
+<ul>
+<li><code>line_number</code> という bool 型のフィールドを追加します</li>
+<li>追加したフィールドにも、structopt アトリビュートを追加します</li>
+<li><code>short</code> はショートオプション、<code>long</code> はロングオプションを受け付けるための記述です</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"PATTERN"</span>)]</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"FILE"</span>)]</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(short = <span class="token string">"-n"</span>, long)]</span><br>  line_number<span class="token punctuation">:</span> <span class="token keyword">bool</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>オプションが追加されたことの確認</h3>
+<ul>
+<li>次のように <code>--help</code> オプションをつけて、cargo コマンドを実行し、<code>-n</code> オプションが存在することを確認します</li>
+<li><code>--help</code> や <code>--version</code> は、structopt を Derive した際に追加されています</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo run -- --help<br>（中略）<br>mygrep 0.1.0<br><br>USAGE:<br>    mygrep [FLAGS] &lt;PATTERN> &lt;FILE><br><br>FLAGS:<br>    -h, --help           Prints help information<br>    -n, --line-number<br>    -V, --version        Prints version information<br><br>ARGS:<br>    &lt;PATTERN><br>    &lt;FILE></code></pre>
+</section>
+<section>
+<h3><code>-n</code> を実装します</h3>
+<ul>
+<li>grep の第 1 引数を、MyGrep オブジェクトに変更します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">,</span> content<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> <span class="token keyword">mut</span> line_number <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span><br>  <span class="token keyword">for</span> line <span class="token keyword">in</span> content<span class="token punctuation">.</span><span class="token function">lines</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token keyword">if</span> line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>pattern<span class="token punctuation">.</span><span class="token function">as_str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>      <span class="token keyword">if</span> mygrep<span class="token punctuation">.</span>line_number <span class="token punctuation">{</span><br>        <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}: {}"</span><span class="token punctuation">,</span> line_number<span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>        <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><br>    <span class="token punctuation">}</span><br>    line_number <span class="token operator">+=</span> <span class="token number">1</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>grep のシグネチャ変更にあわせて、run も変更します</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>所有権の移動に伴うコンパイルエラー</h3>
+<ul>
+<li><code>mygrep.path</code> の値は <code>read_to_string</code> の引数に<a href="https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html">所有権</a>が移動しています</li>
+<li>所有権が移動したフィールドをもつオブジェクトを利用しているので、コンパイルエラーがおきます</li>
+<li>所有権は代入や、関数呼び出しによって移動します</li>
+</ul>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">error[E0382]: use of partially moved value: `mygrep`<br>  --> src/main.rs:68:25<br>   |<br>67 |   match std::fs::read_to_string(mygrep.path) {<br>   |                                 ----------- value partially moved here<br>68 |     Ok(content) => grep(mygrep, content),<br>   |                         ^^^^^^ value used here after partial move<br>   |<br>   = note: partial move occurs because `mygrep.path` has type `String`, which does not implement the `Copy` trait<br><br>error: aborting due to previous error<br><br>For more information about this error</code></pre>
+</section>
+<section>
+<h3>参照と借用</h3>
+<ul>
+<li>所有権を渡す代わりに、一時的に値を貸し出す、ということもできます</li>
+<li>貸し出す場合は、値は<a href="https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html">参照</a>という形で渡します</li>
+<li>変数名の前に <code>&amp;</code> をつけることで、値への参照を取得します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3>ここまでの状態</h3>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">use</span> <span class="token namespace">structopt<span class="token punctuation">::</span></span><span class="token class-name">StructOpt</span><span class="token punctuation">;</span><br><br><span class="token attribute attr-name">#[derive(StructOpt)]</span><br><span class="token attribute attr-name">#[structopt(name=<span class="token string">"mygrep"</span>)]</span><br><span class="token keyword">struct</span> <span class="token type-definition class-name">MyGrep</span><span class="token punctuation">{</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"PATTERN"</span>)]</span><br>  pattern<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(name = <span class="token string">"FILE"</span>)]</span><br>  path<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">,</span><br>  <span class="token attribute attr-name">#[structopt(short = <span class="token string">"-n"</span>, long)]</span><br>  line_number<span class="token punctuation">:</span> <span class="token keyword">bool</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">,</span> content<span class="token punctuation">:</span> <span class="token class-name">String</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> <span class="token keyword">mut</span> line_number <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span><br>  <span class="token keyword">for</span> line <span class="token keyword">in</span> content<span class="token punctuation">.</span><span class="token function">lines</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token keyword">if</span> line<span class="token punctuation">.</span><span class="token function">contains</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>pattern<span class="token punctuation">.</span><span class="token function">as_str</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>      <span class="token keyword">if</span> mygrep<span class="token punctuation">.</span>line_number <span class="token punctuation">{</span><br>        <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}: {}"</span><span class="token punctuation">,</span> line_number<span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>        <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> line<span class="token punctuation">)</span><span class="token punctuation">;</span><br>      <span class="token punctuation">}</span><br>    <span class="token punctuation">}</span><br>    line_number <span class="token operator">+=</span> <span class="token number">1</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> mygrep <span class="token operator">=</span> <span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">from_args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h3><code>-r</code> オプションを実装しよう</h3>
+<ul>
+<li><code>-r</code> オプションは、指定されたパターンを正規表現として解釈するオプションです</li>
+<li>正規表現は <a href="https://crates.io/crates/regex">regex</a> クレートで実現されています</li>
+<li>まず <code>Cargo.toml</code> を編集して regex クレートを読み込んだ上で、<code>main.rs</code> に機能を実装します</li>
+</ul>
+</section>
+<section>
+<h3><code>run</code> を <code>MyGrep</code> のメソッドにしよう</h3>
+<ul>
+<li><code>run</code> はトップレベルに実装された関数でした</li>
+<li>これを <code>MyGrep</code> のメソッドとなるように変更します</li>
+<li>変更後の、<code>main</code> 関数は次のようになります</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> mygrep <span class="token operator">=</span> <span class="token class-name">MyGrep</span><span class="token punctuation">::</span><span class="token function">from_args</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  mygrep<span class="token punctuation">.</span><span class="token function">run</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+
+    </div>
+  </div>
+</body>
+
+</html>
