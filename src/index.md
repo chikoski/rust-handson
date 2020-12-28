@@ -863,9 +863,60 @@ fn main(){
 }
 ~~~
 
-#### use：名前空間へのシンボルの追加
+#### Trait：データ構造の満たす性質の定義
+
+* Rust は型を、そのデータ構造が満たす性質で区別します
+* データ構造の満たす性質は、インタフェースの集まりとして定義されます
+* インタフェースの集まりのことを、Rust では trait と呼びます
+* 次の例では、`i32` と `Vec` は、ともに `Zero` という trait を実装しているため、同じ型として扱えます
+
+~~~rust
+trait Zero {
+    fn is_zero(&self) -> bool;
+}
+
+impl Zero for i32 {
+    fn is_zero(&self) -> bool {　*self == 0　}
+}
+
+impl<T> Zero for Vec<T>{
+    fn is_zero(&self) -> bool{ self.len() == 0 }
+}
+~~~
 
 #### Derive アトリビュート：コードの自動的な追加
+
+* [Derive アトリビュート](https://doc.rust-lang.org/reference/attributes/derive.html) は、指定した trait の持つインタフェースを実装します
+* 次の例では、`Foo` に [PartialEq](https://doc.rust-lang.org/std/cmp/trait.PartialEq.html) と [Clone](https://doc.rust-lang.org/std/clone/index.html) を実装しています
+* [実装方法はマクロによって定められ](https://doc.rust-lang.org/reference/procedural-macros.html#derive-macro-helper-attributes)ています
+* マクロが用意されていない trait を Derive アトリビュートを使って実装できません
+
+~~~rust
+#[derive(PartialEq, Clone)]
+struct Foo<T> {
+    a: i32,
+    b: T,
+}
+~~~
+
+#### use：名前空間へのシンボルの追加
+
+* [`use` は、別のファイルで定義されているシンボルを、そのファイルの名前空間に追加](https://doc.rust-lang.org/std/keyword.use.html)でき、シンボルを省略して記述できるようになります
+* 次の例では、`structopt::StructOpt` を、そのファイルの名前空間に追加したため、[`StructOpt` trait](https://docs.rs/structopt/0.3.21/structopt/trait.StructOpt.html) を `StructOpt` で参照できています
+* 仮に名前空間に追加しなかった場合、`StructOpt` を解決できず、コンパイルエラーとなります
+
+~~~rust
+use structopt::StructOpt;
+
+#[derive(StructOpt)]
+#[structopt(name="mygrep")]
+struct MyGrep{
+  #[structopt(name = "PATTERN")]
+  pattern: String,
+  #[structopt(name = "FILE")]
+  path: String,
+}
+~~~
 
 ### `-n` オプションの追加
 
