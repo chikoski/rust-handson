@@ -10,9 +10,13 @@
   "author": "N.Shimizu <chikoski@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "http-server": "^0.9.0"
+    "@11ty/eleventy": "^0.11.1",
+    "@11ty/eleventy-plugin-syntaxhighlight": "^3.0.4",
+    "markdown-it-header-sections": "^1.0.0"
   },
   "scripts": {
-    "serve": "http-server docs -p 8080 -c-1"
-  }
+    "build": "npx @11ty/eleventy --input ./src",
+    "dev": "npx @11ty/eleventy --input ./src --serve --watch"
+  },
+  "devDependencies": {}
 }
