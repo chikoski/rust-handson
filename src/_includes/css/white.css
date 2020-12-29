@@ -3,7 +3,6 @@
  *
  * By Hakim El Hattab, http://hakim.se
  */
-@import url(./fonts/source-sans-pro/source-sans-pro.css);
 section.has-dark-background, section.has-dark-background h1, section.has-dark-background h2, section.has-dark-background h3, section.has-dark-background h4, section.has-dark-background h5, section.has-dark-background h6 {
   color: #fff; }
 
@@ -12,22 +11,22 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
  *********************************************/
 :root {
   --background-color: #fff;
-  --main-font: Source Sans Pro, Helvetica, sans-serif;
+  --main-font: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --main-font-size: 24px;
   --main-color: #222;
   --block-margin: 20px;
   --heading-margin: 0 0 36px 0;
-  --heading-font: Source Sans Pro, Helvetica, sans-serif;
+  --heading-font: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   --heading-color: #222;
   --heading-line-height: 1.2;
   --heading-letter-spacing: normal;
   --heading-text-shadow: none;
   --heading-font-weight: 600;
   --heading1-text-shadow: none;
-  --heading1-size: 2.5em;
-  --heading2-size: 1.6em;
-  --heading3-size: 1.6em;
-  --heading4-size: 1.6em;
+  --heading1-size: 1.98em;
+  --heading2-size: 1.41em;
+  --heading3-size: 1.41em;
+  --heading4-size: 1.41em;
   --code-font: monospace;
   --link-color: #2a76dd;
   --link-color-hover: #6ca0e8;
@@ -39,7 +38,7 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
   background-color: #fff; }
 
 .reveal {
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
   font-size: 24px;
   font-weight: normal;
   color: #222; }
@@ -69,25 +68,25 @@ section.has-dark-background, section.has-dark-background h1, section.has-dark-ba
 .reveal h5,
 .reveal h6 {
   margin: 0 0 36px 0;
-  color: #222;
-  font-family: "Source Sans Pro", Helvetica, sans-serif;
-  font-weight: 600;
+  color: #333;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+  font-weight: bold;
   line-height: 1.2;
   letter-spacing: normal;
   text-shadow: none;
   word-wrap: break-word; }
 
 .reveal h1 {
-  font-size: 2.5em; }
+  font-size: 1.98em; }
 
 .reveal h2 {
-  font-size: 1.6em; }
+  font-size: 1.41em; }
 
 .reveal h3 {
-  font-size: 1.6em; }
+  font-size: 1.41em; }
 
 .reveal h4 {
-  font-size: 1.6em; }
+  font-size: 1.41em; }
 
 .reveal h1 {
   text-shadow: none; }

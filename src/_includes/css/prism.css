@@ -8,11 +8,11 @@ https://prismjs.com/download.html#themes=prism&languages=bash+rust+shell-session
 
 code[class*="language-"],
 pre[class*="language-"] {
-	color: black;
+	color: #222;
 	background: none;
 	text-shadow: 0 1px white;
 	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-	font-size: 1em;
+	font-size: .81em;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
@@ -52,7 +52,6 @@ code[class*="language-"]::selection, code[class*="language-"] ::selection {
 /* Code blocks */
 pre[class*="language-"] {
 	padding: 1em;
-	margin: .5em 0;
 	overflow: auto;
 }
 
