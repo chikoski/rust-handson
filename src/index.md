@@ -942,7 +942,7 @@ struct MyGrep{
   #[structopt(name = "PATTERN")]
   pattern: String,
   #[structopt(name = "FILE")]
-  path: String,
+  path:¿ String,
   #[structopt(short = "-n", long)]
   line_number: bool,
 }
@@ -1026,7 +1026,7 @@ For more information about this error
 
 ### 参照と借用
 
-* 所有権を渡す代わりに、一時的に値を貸し出す、ということもできます
+* 所有権を渡す代わりに、一時的に値を貸し出すこともできます
 * 貸し出す場合は、値は[参照](https://doc.rust-lang.org/book/ch04-02-references-and-borrowing.html)という形で渡します
 * 変数名の前に `&` をつけることで、値への参照を取得します
 
@@ -1173,3 +1173,16 @@ fn main(){
   println!("zero = {}, one = {}", zero.value, one.value);
 }
 ~~~  
+
+## まとめ：扱ったテーマ
+
+* 変数、制御構造、関数定義と呼び出し、ユーザー定義型と振る舞いの実装
+* ユーザー定義型、所有権
+* crate
+
+### 扱わなかったテーマ
+
+* ライフタイム、所有権の共有
+* 標準ライブラリー、コレクション型
+* モジュールシステム
+* 並列処理、非同期処理
