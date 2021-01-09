@@ -60,6 +60,7 @@ edition = "2018"
 * [The book](https://doc.rust-lang.org/book/) / [日本語版](https://doc.rust-jp.rs/book-ja/)
 * [Rust by Example](https://doc.rust-lang.org/rust-by-example/) / [日本語版](https://doc.rust-jp.rs/rust-by-example-ja/)
 * [Command Line Applications in Rust](https://rust-cli.github.io/book/index.html)
+* [Rust Design Patterns](https://rust-unofficial.github.io/patterns/)
 
 ## FizzBuzz を作ろう
 
@@ -169,8 +170,22 @@ fn main() {
 
 #### `format`
 
-* [`format`](https://doc.rust-lang.org/std/fmt/fn.format.html) は第 1 引数に指定した書式に、第 2 引数以降の値を埋め込んだ文字列を返すマクロです
+* [`format`](https://doc.rust-lang.org/std/fmt/fn.format.html) は書式つき文字列を処理するマクロです
+* 第 1 引数に指定した書式に、第 2 引数以降の値を埋め込みます
 * 次の例では、`Hello, {}` の `{}` 部分に、`name` の値が埋め込まれます
+
+~~~rust
+fn main(){
+  let name = "World";
+  let output = format!("Hello, {}!", name);
+  println!("{}", output);
+}
+~~~
+
+#### マクロの呼び出し
+
+* マクロを呼び出す時は、名前の後に `!` をつけます
+* `format` や `println` はマクロです
 
 ~~~rust
 fn main(){
@@ -241,7 +256,7 @@ fn main() {
 #### より詳しくコンパイルエラーについて知りたい場合は
 
 * rustc に --explain オプションをつけて実行すると、より詳しい解説を読めます
-* 次の例では、E0308 のエラーについて、解説を読みます
+z* 次の例では、E0308 のエラーについて、解説を読みます
 * 同じ解説を [Web でも読めます](https://doc.rust-lang.org/error-index.html)
 
 ~~~shell-session
@@ -407,6 +422,39 @@ fn main() {
 }
 ~~~
 
+#### テストコード
+
+~~~rust
+#[test]
+fn test_fizzbuzz_returns_fizzbuzz() {
+  let expected = "FizzBuzz".to_string();
+  let actual = fizzbuzz(15);
+  assert_eq!(expected, actual);
+}
+
+#[test]
+fn test_fizzbuzz_returns_fizz() {
+  let expected = "Fizz".to_string();
+  let actual = fizzbuzz(6);
+  assert_eq!(expected, actual);
+}
+
+#[test]
+fn test_fizzbuzz_returns_buzz() {
+  let expected = "Buzz".to_string();
+  let actual = fizzbuzz(10);
+  assert_eq!(expected, actual);
+}
+
+#[test]
+fn test_fizzbuzz_returns_number_string() {
+  let number = 4;
+  let expected = format!("{}", number);
+  let actual = fizzbuzz(number);
+  assert_eq!(expected, actual);
+}
+~~~
+
 ### FizzBuzz のまとめ
 
 * 基本的な文法を確認しました
@@ -466,11 +514,11 @@ fn main() {
 #### 成果物とエラーの理由
 
 * `Ok` は成果物を値として持てます。* 同様に `Err` も、エラーの理由を値として持てます
-* 成果物を表すデータ型や、エラーの理由を表すデータ型は、プログラムによって異なります
-* そのため `Result` を扱う際には、成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します
-* 次の例では、成果物の型に `u32` を指定し、エラーの理由は `String` で与えられるとしています
+* 成果物やエラーの理由の表現は、プログラムによって異なります
+* そのため成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します
+* 次の例では、成果物は `u32` であり、エラーの理由は `String` で表現されるとしています
 
-~~~
+~~~rust
 let result: Result<u32, String> = Ok(1);
 ~~~
 
@@ -550,7 +598,8 @@ fn main() {
 
 ### コマンドライン引数の取得
 
-* [`std::env::args()`](https://doc.rust-lang.org/std/env/fn.args.html) は、コマンドライン引数を String として保持するイテレーターを返します
+* [`std::env::args()`](https://doc.rust-lang.org/std/env/fn.args.html) は、コマンドライン引数をイテレーターを返します
+* 各引数は、`String` 型で表現されています
 * [`nth`](https://doc.rust-lang.org/std/iter/trait.Iterator.html#method.nth) メソッドで、n 番目の要素を取得できます
 * `nth` メソッドは `Option` という値を返します
 
@@ -584,7 +633,8 @@ fn main() {
 
 * Option は Result と良く似た性質をしています
 * 公式ドキュメントでは、Result はリッチな Option として紹介されています
-* [値が存在する場合、Option の値は `Some`](https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some) となります。[値が存在しない場合の値は `None`](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None) です
+* [値が存在する場合、Option の値は `Some`](https://doc.rust-lang.org/std/option/enum.Option.html#variant.Some) となります。
+* [値が存在しない場合の値は `None`](https://doc.rust-lang.org/std/option/enum.Option.html#variant.None) です
 
 ~~~rust
 fn main() {
@@ -599,7 +649,7 @@ fn main() {
 #### Option からの値取得
 
 * Some は、実際の値を内部に保持しています
-* Option は Result と同様に、`unwrap` メソッドがあります。これを利用して実際の値を取得できます
+* Option は Result と同様に、`unwrap` メソッドを持っています
 * また下記のようにパターンマッチを利用しても、保持されている値を取得できます
 
 ~~~rust
@@ -778,15 +828,33 @@ fn main(){
 
 ### コマンドラインオプションに対応しよう
 
-* grep は `-n` オプションをつけると、行番号をつけて結果を出力します。この機能を実装します
+* grep は `-n` オプションをつけると、結果に行番号をつけて結果を出力します
+* この機能を mygrep にも実装します
 * オプションの解析には、ライブラリを利用することします
-* ライブラリのことを、Rust では crate（クレート）と呼びます
 
-### クレートの追加
+#### package と crate
+
+* ライブラリやバイナリのことを、Rust では crate（クレート）と呼びます
+* 1 つ以上の crate を取りまとめたものを package と呼びます
+* package は必ず Cargo.toml を持っています
+* このハンズオンでは、mygrep パッケージを操作しています
+
+~~~
+% cargo new mygrep
+  Created binary (application) `mygrep` package
+~~~
+
+#### crates.io：crate レポジトリ
+
+* Cargo は 3rd party ライブラリ（crate）のインストールや管理を行えます
+* レポジトリに公開されている crate は、cargo コマンドでインストールできます
+* [crates.io](https://crates.io/) が標準のレポジトリとして利用されます
+
+### crate の追加
 
 * 今回は [structopt](https://github.com/TeXitoi/structopt) という crate を使います
-* Rust のライブラリは、[crates.io](https://crates.io/) というレポジトリにまとめられています
 * Cargo.toml の dependencies に、使用する crate を追記することで利用できるようになります
+* 次の例は、structopt の 0.3.21 を使用することを記述しています
 
 ~~~toml
 [dependencies]
