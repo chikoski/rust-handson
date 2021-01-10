@@ -171,6 +171,7 @@
 <ul>
 <li><a href="https://doc.rust-lang.org/std/fmt/fn.format.html"><code>format</code></a> は書式つき文字列を処理するマクロです</li>
 <li>第 1 引数に指定した書式に、第 2 引数以降の値を埋め込みます</li>
+<li>第 1 引数にある <code>{}</code> は値を埋め込むプレースホルダーを意味します</li>
 <li>次の例では、<code>Hello, {}</code> の <code>{}</code> 部分に、<code>name</code> の値が埋め込まれます</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">let</span> name <span class="token operator">=</span> <span class="token string">"World"</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Hello, {}!"</span><span class="token punctuation">,</span> name<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
@@ -248,15 +249,6 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">for</span> n <span class="token keyword">in</span> <span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">{</span><br>    <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
 </section>
-<section>
-<h4>単体テスト</h4>
-<ul>
-<li><code>#[test]</code> とアノテーションされた関数は、テスト用の関数として処理されます</li>
-<li>次の例では、<code>fizzbuzz</code> の振る舞いをテストしています</li>
-<li><code>cargo test</code> でテストを実行できます</li>
-</ul>
-<pre class="language-rust"><code class="language-rust"><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizzbuzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
-</section>
 </section>
 <section>
 <h3>変換部分を関数に切り出した結果</h3>
@@ -293,12 +285,48 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 </section>
 </section>
 <section>
-<section>
 <h3>関数プログラミング的な FizzBuzz</h3>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">fizzbuzz</span><span class="token punctuation">(</span>n<span class="token punctuation">:</span> <span class="token keyword">u32</span><span class="token punctuation">)</span> <span class="token punctuation">-></span> <span class="token class-name">String</span><span class="token punctuation">{</span><br>  <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">15</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">5</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span> <span class="token keyword">if</span> n <span class="token operator">%</span> <span class="token number">3</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">{</span><br>    <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> n<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> output <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">..</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">map</span><span class="token punctuation">(</span>fizzbuzz<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">fold</span><span class="token punctuation">(</span><span class="token string">""</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token closure-params"><span class="token closure-punctuation punctuation">|</span>accum<span class="token punctuation">,</span> line<span class="token closure-punctuation punctuation">|</span></span><span class="token punctuation">{</span><br>    <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}\n{}"</span><span class="token punctuation">,</span> accum<span class="token punctuation">,</span> line<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> output<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
 </section>
 <section>
-<h4>テストコード</h4>
+<section>
+<h3>単体テスト</h3>
+<ul>
+<li><code>#[test]</code> とアノテーションされた関数は、テスト用の関数として処理されます</li>
+<li>次の例は、<code>fizzbuzz</code> の振る舞いをテストする関数です</li>
+<li><code>cargo test</code> でテストを実行できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizzbuzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>アサーション</h4>
+<ul>
+<li>アサーションが満たされるかどうかで、テストの成否がきまります</li>
+<li>アサーションは <code>assert</code>、<code>assert_eq</code>、<code>assert_ne</code> マクロで記述します</li>
+<li>次の例では、<code>fizzbuzz</code> の返り値に関する期待を <code>assert_eq</code> で記述しています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizzbuzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>    <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>テストの実行と、その結果</h4>
+<ul>
+<li><code>cargo test</code> でテストが実行されます</li>
+<li>定義されたテストを全て実行し、結果を次のように表示します</li>
+<li>次の例では、4 つのテストが全て成功していることがわかります</li>
+</ul>
+<pre><code>% cargo test
+（中略）
+running 4 tests
+test test_fizzbuzz_returns_buzz ... ok
+test test_fizzbuzz_returns_fizz ... ok
+test test_fizzbuzz_returns_fizzbuzz ... ok
+test test_fizzbuzz_returns_number_string ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+</code></pre>
+</section>
+<section>
+<h4>テストコードの例</h4>
 <pre class="language-rust"><code class="language-rust"><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizzbuzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"FizzBuzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">15</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><br><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_fizz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"Fizz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><br><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_buzz</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token string">"Buzz"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><br><span class="token attribute attr-name">#[test]</span><br><span class="token keyword">fn</span> <span class="token function-definition function">test_fizzbuzz_returns_number_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> number <span class="token operator">=</span> <span class="token number">4</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> expected <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> number<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> actual <span class="token operator">=</span> <span class="token function">fizzbuzz</span><span class="token punctuation">(</span>number<span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token macro property">assert_eq!</span><span class="token punctuation">(</span>expected<span class="token punctuation">,</span> actual<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
 </section>
 </section>
@@ -347,10 +375,11 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <section>
 <h4>成果物とエラーの理由</h4>
 <ul>
-<li><code>Ok</code> は成果物を値として持てます。* 同様に <code>Err</code> も、エラーの理由を値として持てます</li>
+<li><code>Ok</code> は成果物を値として持てます。</li>
+<li>同様に <code>Err</code> も、エラーの理由を値として持てます</li>
 <li>成果物やエラーの理由の表現は、プログラムによって異なります</li>
 <li>そのため成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します</li>
-<li>次の例では、成果物は <code>u32</code> であり、エラーの理由は <code>String</code> で表現されるとしています</li>
+<li>次の例では、成果物は <code>u32</code> であり、エラーの理由は <code>String</code> で表現されます</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 </section>
@@ -604,7 +633,8 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <section>
 <h3>オプションが追加されたことの確認</h3>
 <ul>
-<li>次のように <code>--help</code> オプションをつけて、cargo コマンドを実行し、<code>-n</code> オプションが存在することを確認します</li>
+<li>次のように <code>--help</code> オプションをつけて、cargo コマンドを実行します</li>
+<li><code>-n</code> オプションが存在していれば成功です</li>
 <li><code>--help</code> や <code>--version</code> は、structopt を Derive した際に追加されています</li>
 </ul>
 <pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo run -- --help<br>（中略）<br>mygrep 0.1.0<br><br>USAGE:<br>    mygrep [FLAGS] &lt;PATTERN> &lt;FILE><br><br>FLAGS:<br>    -h, --help           Prints help information<br>    -n, --line-number<br>    -V, --version        Prints version information<br><br>ARGS:<br>    &lt;PATTERN><br>    &lt;FILE></code></pre>
@@ -621,6 +651,7 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
 </section>
 <section>
+<section>
 <h3>所有権の移動に伴うコンパイルエラー</h3>
 <ul>
 <li><code>mygrep.path</code> の値は <code>read_to_string</code> の引数に<a href="https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html">所有権</a>が移動しています</li>
@@ -630,6 +661,37 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <pre class="language-shell-session"><code class="language-shell-session"><span class="token output">error[E0382]: use of partially moved value: `mygrep`<br>  --> src/main.rs:68:25<br>   |<br>67 |   match std::fs::read_to_string(mygrep.path) {<br>   |                                 ----------- value partially moved here<br>68 |     Ok(content) => grep(mygrep, content),<br>   |                         ^^^^^^ value used here after partial move<br>   |<br>   = note: partial move occurs because `mygrep.path` has type `String`, which does not implement the `Copy` trait<br><br>error: aborting due to previous error<br><br>For more information about this error</code></pre>
 </section>
 <section>
+<h4>名前と値</h4>
+<ul>
+<li>Rust では <code>=</code> で行う行為を束縛と呼びます</li>
+<li><code>let</code> で宣言するのは名前です。</li>
+<li><code>=</code> は値に変数を結びつけると考えるため束縛と呼ばれます</li>
+<li>下記の例では、<code>chiko</code> と <code>another_chiko</code> は異なる値に束縛されています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">struct</span> <span class="token type-definition class-name">Person</span><span class="token punctuation">{</span><br>  name<span class="token punctuation">:</span> <span class="token class-name">String</span><br><span class="token punctuation">}</span><br><br><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> another_chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>所有権の移動</h4>
+<ul>
+<li>Rust で値に束縛される名前は 1 つまでとなっています</li>
+<li>ある値が他の名前に束縛された時、元の名前はその値に束縛されなくなります</li>
+<li>このことを所有権の移動（move）と呼びます</li>
+<li>下記のコードは、<code>chiko</code> に束縛されていた値を、所有権の移動後に参照するためコンパイルエラーとなります</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> another_chiko <span class="token operator">=</span> chiko<span class="token punctuation">;</span><br><br><span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> chiko<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>所有権の移動と関数呼び出し</h4>
+<ul>
+<li>所有権の移動は関数呼び出しでも起こります</li>
+<li>それは関数の仮引数（名前）が、実引数（値）に束縛されるためです</li>
+<li>次の例では、<code>do_somthing</code> 呼び出しに <code>chiko</code> から所有権が移動します</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token function">do_somthing</span><span class="token punctuation">(</span>chiko<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Hello, {}"</span><span class="token punctuation">,</span> chiko<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</section>
+</section>
+<section>
+<section>
 <h3>参照と借用</h3>
 <ul>
 <li>所有権を渡す代わりに、一時的に値を貸し出すこともできます</li>
@@ -637,6 +699,43 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <li>変数名の前に <code>&amp;</code> をつけることで、値への参照を取得します</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>mygrep<span class="token punctuation">.</span>path<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>    <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>    <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>  <span class="token punctuation">}</span>  <br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>参照</h4>
+<ul>
+<li>Rust には参照という概念があります</li>
+<li>参照とは、ある値を指す値とでも呼ぶもので、値へ間接的にアクセスするために利用します</li>
+<li><code>&amp;</code> を変数につけることで、それを束縛する値への参照を取得できます</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> reference_to_chiko <span class="token operator">=</span> <span class="token operator">&amp;</span>chiko<span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>参照と所有権の移動</h4>
+<ul>
+<li>参照を取得した時に、値の所有権は移動しません</li>
+<li>次の例では、<code>reference_to_chiko</code> へ値の所有権は移動していません</li>
+<li>そのため、コンパイルエラーとはなりません</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> reference_to_chiko <span class="token operator">=</span> <span class="token operator">&amp;</span>chiko<span class="token punctuation">;</span><br><span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> chiko<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>借用：borrowing</h4>
+<ul>
+<li>参照で名前を束縛した場合、その名前は参照先の値を「借用」していると考えます</li>
+<li>次の例では、<code>referencE_to_chiko</code> は <code>chiko</code> を束縛している値を借用しています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> reference_to_chiko <span class="token operator">=</span> <span class="token operator">&amp;</span>chiko<span class="token punctuation">;</span></code></pre>
+</section>
+<section>
+<h4>借用と関数呼び出し</h4>
+<ul>
+<li>借用を上手に使うと、所有権を移動することなく関数を呼び出せます</li>
+<li>次の <code>do_something</code> は参照を引数として受け取ります</li>
+<li>この関数を呼び出した時、<code>chiko</code> を束縛する値の所有権は移動しません</li>
+<li>そのため、最後の行はコンパイルエラーとはなりません</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">do_something</span><span class="token punctuation">(</span>person<span class="token punctuation">:</span> <span class="token operator">&amp;</span><span class="token class-name">Person</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"Hello, {}!"</span><span class="token punctuation">,</span> person<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span><br><span class="token comment">// 中略</span><br><span class="token keyword">let</span> chiko <span class="token operator">=</span> <span class="token class-name">Person</span><span class="token punctuation">{</span>name<span class="token punctuation">:</span> <span class="token string">"Chiko"</span><span class="token punctuation">.</span><span class="token function">to_string</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">}</span><span class="token punctuation">;</span><br><span class="token function">do_something</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>chiko<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token macro property">format!</span><span class="token punctuation">(</span><span class="token string">"Hello, {}!"</span><span class="token punctuation">,</span> chiko<span class="token punctuation">.</span>name<span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
+</section>
 </section>
 <section>
 <h3>ここまでの状態</h3>

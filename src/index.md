@@ -172,6 +172,7 @@ fn main() {
 
 * [`format`](https://doc.rust-lang.org/std/fmt/fn.format.html) は書式つき文字列を処理するマクロです
 * 第 1 引数に指定した書式に、第 2 引数以降の値を埋め込みます
+* 第 1 引数にある `{}` は値を埋め込むプレースホルダーを意味します
 * 次の例では、`Hello, {}` の `{}` 部分に、`name` の値が埋め込まれます
 
 ~~~rust
@@ -323,21 +324,6 @@ fn main() {
 }
 ~~~
 
-#### 単体テスト
-
-* `#[test]` とアノテーションされた関数は、テスト用の関数として処理されます
-* 次の例では、`fizzbuzz` の振る舞いをテストしています
-* `cargo test` でテストを実行できます
-
-~~~rust
-#[test]
-fn test_fizzbuzz_returns_fizzbuzz() {
-    let expected = "FizzBuzz".to_string();
-    let actual = fizzbuzz(15);
-    assert_eq!(expected, actual);
-}
-~~~
-
 ### 変換部分を関数に切り出した結果
 
 ~~~rust
@@ -422,7 +408,55 @@ fn main() {
 }
 ~~~
 
-#### テストコード
+### 単体テスト
+
+* `#[test]` とアノテーションされた関数は、テスト用の関数として処理されます
+* 次の例は、`fizzbuzz` の振る舞いをテストする関数です
+* `cargo test` でテストを実行できます
+
+~~~rust
+#[test]
+fn test_fizzbuzz_returns_fizzbuzz() {
+    let expected = "FizzBuzz".to_string();
+    let actual = fizzbuzz(15);
+    assert_eq!(expected, actual);
+}
+~~~
+
+#### アサーション
+
+* アサーションが満たされるかどうかで、テストの成否がきまります
+* アサーションは `assert`、`assert_eq`、`assert_ne` マクロで記述します
+* 次の例では、`fizzbuzz` の返り値に関する期待を `assert_eq` で記述しています
+
+~~~rust
+#[test]
+fn test_fizzbuzz_returns_fizzbuzz() {
+    let expected = "FizzBuzz".to_string();
+    let actual = fizzbuzz(15);
+    assert_eq!(expected, actual);
+}
+~~~
+
+#### テストの実行と、その結果
+
+* `cargo test` でテストが実行されます
+* 定義されたテストを全て実行し、結果を次のように表示します
+* 次の例では、4 つのテストが全て成功していることがわかります
+
+~~~
+% cargo test
+（中略）
+running 4 tests
+test test_fizzbuzz_returns_buzz ... ok
+test test_fizzbuzz_returns_fizz ... ok
+test test_fizzbuzz_returns_fizzbuzz ... ok
+test test_fizzbuzz_returns_number_string ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+~~~
+
+#### テストコードの例
 
 ~~~rust
 #[test]
@@ -513,10 +547,11 @@ fn main() {
 
 #### 成果物とエラーの理由
 
-* `Ok` は成果物を値として持てます。* 同様に `Err` も、エラーの理由を値として持てます
+* `Ok` は成果物を値として持てます。
+* 同様に `Err` も、エラーの理由を値として持てます
 * 成果物やエラーの理由の表現は、プログラムによって異なります
 * そのため成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します
-* 次の例では、成果物は `u32` であり、エラーの理由は `String` で表現されるとしています
+* 次の例では、成果物は `u32` であり、エラーの理由は `String` で表現されます
 
 ~~~rust
 let result: Result<u32, String> = Ok(1);
@@ -1018,7 +1053,8 @@ struct MyGrep{
 
 ### オプションが追加されたことの確認
 
-* 次のように `--help` オプションをつけて、cargo コマンドを実行し、`-n` オプションが存在することを確認します
+* 次のように `--help` オプションをつけて、cargo コマンドを実行します
+* `-n` オプションが存在していれば成功です
 * `--help` や `--version` は、structopt を Derive した際に追加されています
 
 ~~~shell-session
@@ -1092,6 +1128,48 @@ error: aborting due to previous error
 For more information about this error
 ~~~
 
+#### 名前と値
+
+* Rust では `=` で行う行為を束縛と呼びます
+* `let` で宣言するのは名前です。
+* `=` は値に変数を結びつけると考えるため束縛と呼ばれます
+* 下記の例では、`chiko` と `another_chiko` は異なる値に束縛されています
+
+~~~rust
+struct Person{
+  name: String
+}
+
+let chiko = Person{name: "Chiko".to_string()};
+let another_chiko = Person{name: "Chiko".to_string()};
+~~~
+
+#### 所有権の移動
+
+* Rust で値に束縛される名前は 1 つまでとなっています
+* ある値が他の名前に束縛された時、元の名前はその値に束縛されなくなります
+* このことを所有権の移動（move）と呼びます
+* 下記のコードは、`chiko` に束縛されていた値を、所有権の移動後に参照するためコンパイルエラーとなります
+
+~~~rust
+let chiko = Person{name: "Chiko".to_string()};
+let another_chiko = chiko;
+
+println!("{}", chiko.name);
+~~~
+
+#### 所有権の移動と関数呼び出し
+
+* 所有権の移動は関数呼び出しでも起こります
+* それは関数の仮引数（名前）が、実引数（値）に束縛されるためです
+* 次の例では、`do_somthing` 呼び出しに `chiko` から所有権が移動します
+
+~~~rust
+let chiko = Person{name: "Chiko".to_string()};
+do_somthing(chiko);
+let message = format!("Hello, {}", chiko.name);
+~~~
+
 ### 参照と借用
 
 * 所有権を渡す代わりに、一時的に値を貸し出すこともできます
@@ -1105,6 +1183,56 @@ fn run(mygrep: MyGrep){
     Err(reason) => println!("{}", reason)
   }  
 }
+~~~
+
+#### 参照
+
+* Rust には参照という概念があります
+* 参照とは、ある値を指す値とでも呼ぶもので、値へ間接的にアクセスするために利用します
+* `&` を変数につけることで、それを束縛する値への参照を取得できます
+
+~~~rust
+let chiko = Person{name: "Chiko".to_string()};
+let reference_to_chiko = &chiko;
+~~~
+
+#### 参照と所有権の移動
+
+* 参照を取得した時に、値の所有権は移動しません
+* 次の例では、`reference_to_chiko` へ値の所有権は移動していません
+* そのため、コンパイルエラーとはなりません
+
+~~~rust
+let chiko = Person{name: "Chiko".to_string()};
+let reference_to_chiko = &chiko;
+let message = format!("{}", chiko.name);
+~~~
+
+#### 借用：borrowing
+
+* 参照で名前を束縛した場合、その名前は参照先の値を「借用」していると考えます
+* 次の例では、`referencE_to_chiko` は `chiko` を束縛している値を借用しています
+
+~~~rust
+let chiko = Person{name: "Chiko".to_string()};
+let reference_to_chiko = &chiko;
+~~~
+
+#### 借用と関数呼び出し
+
+* 借用を上手に使うと、所有権を移動することなく関数を呼び出せます
+* 次の `do_something` は参照を引数として受け取ります
+* この関数を呼び出した時、`chiko` を束縛する値の所有権は移動しません
+* そのため、最後の行はコンパイルエラーとはなりません
+
+~~~rust
+fn do_something(person: &Person){
+  println!("Hello, {}!", person.name);
+}
+// 中略
+let chiko = Person{name: "Chiko".to_string()};
+do_something(&chiko);
+let message = format!("Hello, {}!", chiko.name);
 ~~~
 
 ### ここまでの状態
