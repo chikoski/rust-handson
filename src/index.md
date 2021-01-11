@@ -61,6 +61,7 @@ edition = "2018"
 * [Rust by Example](https://doc.rust-lang.org/rust-by-example/) / [日本語版](https://doc.rust-jp.rs/rust-by-example-ja/)
 * [Command Line Applications in Rust](https://rust-cli.github.io/book/index.html)
 * [Rust Design Patterns](https://rust-unofficial.github.io/patterns/)
+* [This week in Rust](https://this-week-in-rust.org/)
 
 ## FizzBuzz を作ろう
 
@@ -236,7 +237,20 @@ let another_string = slice_of_message.to_string();
 println!("{}", another_string);
 ~~~
 
-#### コンパイルエラーの修正
+#### より詳しくコンパイルエラーについて知りたい場合は
+
+* rustc に --explain オプションをつけて実行すると、より詳しい解説を読めます
+z* 次の例では、E0308 のエラーについて、解説を読みます
+* 同じ解説を [Web でも読めます](https://doc.rust-lang.org/error-index.html)
+
+~~~shell-session
+% rustc --explain E0308
+Expected type did not match the received type.
+
+Erroneous code examples:
+~~~
+
+#### コンパイルエラーの修正方法
 
 * if 節の評価値の型が String となるように修正します
 * `to_string` メソッドを呼ぶことで、String 型の `"FizzBuzz"` を作成できます
@@ -254,17 +268,38 @@ fn main() {
 }
 ~~~
 
-#### より詳しくコンパイルエラーについて知りたい場合は
+#### 別のコンパイルエラーの修正方法
 
-* rustc に --explain オプションをつけて実行すると、より詳しい解説を読めます
-z* 次の例では、E0308 のエラーについて、解説を読みます
-* 同じ解説を [Web でも読めます](https://doc.rust-lang.org/error-index.html)
+* `format` マクロは、プレースホルダーなしでも利用できます
 
-~~~shell-session
-% rustc --explain E0308
-Expected type did not match the received type.
+~~~rust
+fn main() {
+  for n in 0..10{
+    let output = if n % 15 == 0{
+      format!("FizzBuzz")
+    }else{
+      format!("{}", n)
+    };
+    println!("{}", output);
+  }
+}
+~~~
 
-Erroneous code examples:
+#### さらに別のコンパイルエラーの修正方法
+
+* `String::from` で `String` オブジェクトを作ることもできます
+
+~~~rust
+fn main() {
+  for n in 0..10{
+    let output = if n % 15 == 0{
+      String::from("FizzBuzz")
+    }else{
+      format!("{}", n)
+    };
+    println!("{}", output);
+  }
+}
 ~~~
 
 ### FizzBuzz: 手続き的なバージョン
@@ -1192,35 +1227,25 @@ fn run(mygrep: MyGrep){
 * `&` を変数につけることで、それを束縛する値への参照を取得できます
 
 ~~~rust
-let chiko = Person{name: "Chiko".to_string()};
-let reference_to_chiko = &chiko;
+let chiko = Person{name: format!("Chiko")};
+let reference = &chiko;
 ~~~
 
 #### 参照と所有権の移動
 
 * 参照を取得した時に、値の所有権は移動しません
-* 次の例では、`reference_to_chiko` へ値の所有権は移動していません
+* 次の例では、`reference` へ値の所有権は移動していません
 * そのため、コンパイルエラーとはなりません
 
 ~~~rust
-let chiko = Person{name: "Chiko".to_string()};
-let reference_to_chiko = &chiko;
+let chiko = Person{name: format!("Chiko")};
+let reference = &chiko;
 let message = format!("{}", chiko.name);
 ~~~
 
 #### 借用：borrowing
 
-* 参照で名前を束縛した場合、その名前は参照先の値を「借用」していると考えます
-* 次の例では、`referencE_to_chiko` は `chiko` を束縛している値を借用しています
-
-~~~rust
-let chiko = Person{name: "Chiko".to_string()};
-let reference_to_chiko = &chiko;
-~~~
-
-#### 借用と関数呼び出し
-
-* 借用を上手に使うと、所有権を移動することなく関数を呼び出せます
+* 関数が参照を引数とすることを「借用（borrowing）」と呼びます
 * 次の `do_something` は参照を引数として受け取ります
 * この関数を呼び出した時、`chiko` を束縛する値の所有権は移動しません
 * そのため、最後の行はコンパイルエラーとはなりません
@@ -1229,10 +1254,46 @@ let reference_to_chiko = &chiko;
 fn do_something(person: &Person){
   println!("Hello, {}!", person.name);
 }
-// 中略
-let chiko = Person{name: "Chiko".to_string()};
-do_something(&chiko);
-let message = format!("Hello, {}!", chiko.name);
+
+fn main(){
+  let chiko = Person{name: format!("Chiko")};
+  do_something(&chiko);
+  let message = format!("Hello, {}!", chiko.name);
+}
+~~~
+
+#### 所有権が移動した後の借用
+
+* 次の例では `greet` を呼び出し時に所有権が移動します
+* 所有権が移動した値は、関数呼び出し後に消滅します
+* 消滅後 `reference` 経由で値を参照しているので、コンパイルエラーとなります
+
+~~~rust
+fn greet(person: Person){
+  println!("Hello, {}", person.name);
+}
+
+fn main() {
+  let chiko = Person{name: format!("Chiko")};
+  let reference = &chiko;
+  greet(chiko);
+  println!("{}", reference.name);
+}
+~~~
+
+#### 所有権移動後の借用によるエラーメッセージ
+
+~~~rust
+error[E0505]: cannot move out of `chiko` because it is borrowed
+  --> src/main.rs:13:11
+   |
+11 |     let reference = &chiko;
+   |                     ------ borrow of `chiko` occurs here
+12 |     println!("{}", reference.name);
+13 |     greet(chiko);
+   |           ^^^^^ move out of `chiko` occurs here
+14 |     println!("{}", reference.name);
+   |                    -------------- borrow later used here
 ~~~
 
 ### ここまでの状態
@@ -1255,11 +1316,12 @@ fn grep(mygrep: MyGrep, content: String){
   let mut line_number = 1;
   for line in content.lines(){
     if line.contains(mygrep.pattern.as_str()){
-      if mygrep.line_number {
-        println!("{}: {}", line_number, line);
+      let prefix = if mygrep.line_number {
+        format!("{}:", line_number)
       }else{
-        println!("{}", line);
-      }
+        format!("")
+      };
+      println!("{}{}", prefix, line)
     }
     line_number += 1;
   }
@@ -1278,13 +1340,162 @@ fn main(){
 }
 ~~~
 
-### `-r` オプションを実装しよう
+## 複数のファイルを処理できるように
+
+* grep は複数のファイルを処理できます
+* 複数ファイルを処理している場合、先頭にファイル名をつけて結果を出力します
+
+~~~
+% grep version Cargo.*
+grep version Cargo.*
+Cargo.lock:version = "0.11.0"
+Cargo.lock:version = "0.2.14"
+Cargo.toml:version = "0.1.0"
+~~~
+
+### MyGrep を修正します
+
+* `path` の型を `Vec<String>` に変更します
+* [`Vec`](https://doc.rust-lang.org/std/vec/struct.Vec.html) は可変長の配列です
+* 要素の型をパラメータで指定します
+
+~~~rust
+#[derive(StructOpt)]
+#[structopt(name="mygrep")]
+struct MyGrep{
+  #[structopt(short = "-n", long)]
+  line_number: bool,
+  #[structopt(name = "PATTERN")]
+  pattern: String,
+  #[structopt(name = "FILE")]
+  path: Vec<String>,  
+}
+~~~
+
+### path を走査するように `run` を変更します
+
+* `Vec` にはイテレーターを返すメソッド `iter` があります
+* これを利用して、`path` を走査します
+
+~~~rust
+fn run(mygrep: MyGrep){
+  for file in mygrep.path.iter(){
+   match std::fs::read_to_string(file) {
+      Ok(content) => grep(mygrep, content),
+      Err(reason) => println!("{}", reason)
+    }  
+  }
+}
+~~~
+
+### `grep` のシグネチャを変更します
+
+* `grep` は何度も呼ばれる可能性があります
+* 呼び出しによって `MyGrep` の所有権が移動すると、2 回目以降の処理に差し障ります
+* `MyGrep` を借用するようにシグネチャを変更します
+
+~~~rust
+fn grep(mygrep: &MyGrep, content: String){
+  let mut line_number = 1;
+  for line in content.lines(){
+    if line.contains(mygrep.pattern.as_str()){
+      let prefix = if mygrep.line_number {
+        format!("{}:", line_number)
+      }else{
+        format!("")
+      };
+      println!("{}{}", prefix, line)
+    }
+    line_number += 1;
+  }
+}
+~~~
+
+### ファイル名を出力する機能を実装します
+
+* `Vec` の持つ `len` メソッドを呼ぶと、要素数を取得できます
+* 処理中のファイル名は引数で与えられることします
+
+~~~rust
+fn grep(mygrep: &MyGrep, content: String, file_name: &str){
+  let mut line_number = 1;
+  for line in content.lines(){
+    if line.contains(mygrep.pattern.as_str()){
+      let prefix_line_number = if mygrep.line_number {
+        format!("{}:", line_number)
+      }else{
+        format!("")
+      };
+      let prefix_file_name = if mygrep.path.len() > 1{
+        format!("{}:", file_name)
+      }else{
+        format!("")
+      };
+      println!("{}{}{}", prefix_file_name, prefix_line_number, line)
+    }
+    line_number += 1;
+  }
+}
+~~~
+
+### 呼び出し側も変更します
+
+~~~rust
+use structopt::StructOpt;
+
+#[derive(StructOpt)]
+#[structopt(name="mygrep")]
+struct MyGrep{
+  #[structopt(short = "-n", long)]
+  line_number: bool,
+  #[structopt(name = "PATTERN")]
+  pattern: String,
+  #[structopt(name = "FILE")]
+  path: Vec<String>,  
+}
+
+fn grep(mygrep: &MyGrep, content: String, file_name: &str){
+  let mut line_number = 1;
+  for line in content.lines(){
+    if line.contains(mygrep.pattern.as_str()){
+      let prefix_line_number = if mygrep.line_number {
+        format!("{}:", line_number)
+      }else{
+        format!("")
+      };
+      let prefix_file_name = if mygrep.path.len() > 1{
+        format!("{}:", file_name)
+      }else{
+        format!("")
+      };
+      println!("{}{}{}", prefix_file_name, prefix_line_number, line)
+    }
+    line_number += 1;
+  }
+}
+
+fn run(mygrep: MyGrep){
+  for file in mygrep.path.iter(){
+   match std::fs::read_to_string(file) {
+      Ok(content) => grep(&mygrep, content, file),
+      Err(reason) => println!("{}", reason)
+    }  
+  }
+}
+
+fn main(){
+  let mygrep = MyGrep::from_args();
+  run(mygrep);
+}
+~~~
+
+## 拡張例：`-r` オプションを実装しよう
 
 * `-r` オプションは、指定されたパターンを正規表現として解釈するオプションです
 * 正規表現は [regex](https://crates.io/crates/regex) クレートで実現されています
 * まず `Cargo.toml` を編集して regex クレートを読み込んだ上で、`main.rs` に機能を実装します
 
-### `run` を `MyGrep` のメソッドにしよう
+## 拡張例：`run` を `MyGrep` のメソッドにしよう
 
 * `run` はトップレベルに実装された関数でした
 * これを `MyGrep` のメソッドとなるように変更します
@@ -1297,7 +1508,7 @@ fn main(){
 }
 ~~~
 
-#### `self` を引数にとる関数
+### `self` を引数にとる関数
 
 * [`self`](https://doc.rust-lang.org/std/keyword.self.html) を引数にとる関数をデータ構造に実装することで、そのデータ構造にメソッドを追加できます
 * メソッド呼び出し時、`self` はメソッドのレシーバーに束縛されます
@@ -1368,7 +1579,13 @@ fn main(){
   let one = zero.succ();
   println!("zero = {}, one = {}", zero.value, one.value);
 }
-~~~  
+~~~
+
+## 拡張例：Rayon を使った並列化
+
+* Rust には並列プログラムを安全に記述できるという強みがあります
+* その強みを生かした crate に [Rayon](https://github.com/rayon-rs/rayon) があります
+* `par_iter` を呼ぶことで、イテレーターに対する処理を並列化できます
 
 ## まとめ：扱ったテーマ
 
