@@ -329,16 +329,7 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <li>定義されたテストを全て実行し、結果を次のように表示します</li>
 <li>次の例では、4 つのテストが全て成功していることがわかります</li>
 </ul>
-<pre><code>% cargo test
-（中略）
-running 4 tests
-test test_fizzbuzz_returns_buzz ... ok
-test test_fizzbuzz_returns_fizz ... ok
-test test_fizzbuzz_returns_fizzbuzz ... ok
-test test_fizzbuzz_returns_number_string ... ok
-
-test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
-</code></pre>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo test<br>（中略）<br>running 4 tests<br>test test_fizzbuzz_returns_buzz ... ok<br>test test_fizzbuzz_returns_fizz ... ok<br>test test_fizzbuzz_returns_fizzbuzz ... ok<br>test test_fizzbuzz_returns_number_string ... ok<br><br>test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s</code></pre>
 </section>
 <section>
 <h4>テストコードの例</h4>
@@ -490,9 +481,10 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 <section>
 <h2>grep への拡張</h2>
 <ul>
-<li>ここまでで、指定したファイルの中身を文字列として出力するプログラムができました。これを拡張して grep コマンドを実装します</li>
-<li>grep には 2 つのコマンドライン引数があります。1 つ目がパターン、2 つめがファイルパスです</li>
-<li>次のれいでは、version がパターンで、Cargo.toml がファイルパスとなります</li>
+<li>ここまでで、指定したファイルの中身を文字列として出力するプログラムができました</li>
+<li>これを拡張して grep コマンドを実装します</li>
+<li>grep には 2 つのコマンドライン引数があります：パターンとパスです</li>
+<li>次の例では、version がパターンで、Cargo.toml がパスとなります</li>
 </ul>
 <pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% grep version Cargo.toml<br>version = "0.1.0"</code></pre>
 </section>
@@ -555,9 +547,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 <li>package は必ず Cargo.toml を持っています</li>
 <li>このハンズオンでは、mygrep パッケージを操作しています</li>
 </ul>
-<pre><code>% cargo new mygrep
-  Created binary (application) `mygrep` package
-</code></pre>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% cargo new mygrep<br>  Created binary (application) `mygrep` package</code></pre>
 </section>
 <section>
 <h4>crates.io：crate レポジトリ</h4>
@@ -767,12 +757,7 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 <li>grep は複数のファイルを処理できます</li>
 <li>複数ファイルを処理している場合、先頭にファイル名をつけて結果を出力します</li>
 </ul>
-<pre><code>% grep version Cargo.*
-grep version Cargo.*
-Cargo.lock:version = &quot;0.11.0&quot;
-Cargo.lock:version = &quot;0.2.14&quot;
-Cargo.toml:version = &quot;0.1.0&quot;
-</code></pre>
+<pre class="language-shell-session"><code class="language-shell-session"><span class="token output">% grep version Cargo.*<br>grep version Cargo.*<br>Cargo.lock:version = "0.11.0"<br>Cargo.lock:version = "0.2.14"<br>Cargo.toml:version = "0.1.0"</code></pre>
 </section>
 <section>
 <h3>MyGrep を修正します</h3>
@@ -787,7 +772,7 @@ Cargo.toml:version = &quot;0.1.0&quot;
 <h3>path を走査するように <code>run</code> を変更します</h3>
 <ul>
 <li><code>Vec</code> にはイテレーターを返すメソッド <code>iter</code> があります</li>
-<li>これを利用して、<code>path</code> を走査します</li>
+<li>これを利用して <code>path</code> を走査します</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">run</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">:</span> <span class="token class-name">MyGrep</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>  <span class="token keyword">for</span> file <span class="token keyword">in</span> mygrep<span class="token punctuation">.</span>path<span class="token punctuation">.</span><span class="token function">iter</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>   <span class="token keyword">match</span> <span class="token namespace">std<span class="token punctuation">::</span>fs<span class="token punctuation">::</span></span><span class="token function">read_to_string</span><span class="token punctuation">(</span>file<span class="token punctuation">)</span> <span class="token punctuation">{</span><br>      <span class="token class-name">Ok</span><span class="token punctuation">(</span>content<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token function">grep</span><span class="token punctuation">(</span>mygrep<span class="token punctuation">,</span> content<span class="token punctuation">)</span><span class="token punctuation">,</span><br>      <span class="token class-name">Err</span><span class="token punctuation">(</span>reason<span class="token punctuation">)</span> <span class="token operator">=></span> <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> reason<span class="token punctuation">)</span><br>    <span class="token punctuation">}</span>  <br>  <span class="token punctuation">}</span><br><span class="token punctuation">}</span></code></pre>
 </section>

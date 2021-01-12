@@ -479,7 +479,7 @@ fn test_fizzbuzz_returns_fizzbuzz() {
 * 定義されたテストを全て実行し、結果を次のように表示します
 * 次の例では、4 つのテストが全て成功していることがわかります
 
-~~~
+~~~shell-session
 % cargo test
 （中略）
 running 4 tests
@@ -753,9 +753,10 @@ fn main() {
 
 ## grep への拡張
 
-* ここまでで、指定したファイルの中身を文字列として出力するプログラムができました。これを拡張して grep コマンドを実装します
-* grep には 2 つのコマンドライン引数があります。1 つ目がパターン、2 つめがファイルパスです
-* 次のれいでは、version がパターンで、Cargo.toml がファイルパスとなります
+* ここまでで、指定したファイルの中身を文字列として出力するプログラムができました
+* これを拡張して grep コマンドを実装します
+* grep には 2 つのコマンドライン引数があります：パターンとパスです
+* 次の例では、version がパターンで、Cargo.toml がパスとなります
 
 ~~~shell-session
 % grep version Cargo.toml
@@ -909,7 +910,7 @@ fn main(){
 * package は必ず Cargo.toml を持っています
 * このハンズオンでは、mygrep パッケージを操作しています
 
-~~~
+~~~shell-session
 % cargo new mygrep
   Created binary (application) `mygrep` package
 ~~~
@@ -1345,7 +1346,7 @@ fn main(){
 * grep は複数のファイルを処理できます
 * 複数ファイルを処理している場合、先頭にファイル名をつけて結果を出力します
 
-~~~
+~~~shell-session
 % grep version Cargo.*
 grep version Cargo.*
 Cargo.lock:version = "0.11.0"
@@ -1375,7 +1376,7 @@ struct MyGrep{
 ### path を走査するように `run` を変更します
 
 * `Vec` にはイテレーターを返すメソッド `iter` があります
-* これを利用して、`path` を走査します
+* これを利用して `path` を走査します
 
 ~~~rust
 fn run(mygrep: MyGrep){
