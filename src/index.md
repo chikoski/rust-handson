@@ -63,6 +63,12 @@ edition = "2018"
 * [Rust Design Patterns](https://rust-unofficial.github.io/patterns/)
 * [This week in Rust](https://this-week-in-rust.org/)
 
+#### Playground
+
+* [https://play.rust-lang.org/](https://play.rust-lang.org/) 
+* オンラインで Rust の挙動を確認できます
+* gist 上のコードを読み込ませることもできます：[例](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=25c84918885d514bc073a7a494c95fdc) / [gist](https://gist.github.com/chikoski/25c84918885d514bc073a7a494c95fdc)
+
 ## FizzBuzz を作ろう
 
 * 1 から 100 までの数値を出力します
@@ -140,12 +146,26 @@ fn main() {
 * `0..10` は 0 以上 10 未満の[範囲を表すオブジェクト](https://doc.rust-lang.org/std/ops/struct.Range.html)を定義します
 * このオブジェクトは、[イテレーター](https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF)としての性質を持っています
 * そのため [for 文](https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%86%E3%83%AC%E3%83%BC%E3%82%BF)で範囲に含まれる整数を列挙できます
-* 下記では、列挙された値を使わないので、`_` を利用しています
+* 下記では、列挙された値を使わないので、変数名に `_` を利用しています
 
 ~~~rust
 fn main() {
   for _ in 0..10{
     println!("Hello, world!");
+  }
+}
+~~~
+
+#### 列挙された値を利用する場合
+
+* `for` の後に記述された変数で、列挙された値を参照できます
+* 次の例では、列挙された値を埋め込んだ文字列を出力しています
+* [Playground で試す](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=218236d84b46e5e91f4f7cceafbadcea)
+
+~~~rust
+fn main() {
+  for iteration in 0..10{
+    println!("Hello, world! (iteration #{})", iteration);
   }
 }
 ~~~
@@ -184,10 +204,11 @@ fn main(){
 }
 ~~~
 
-#### マクロの呼び出し
+#### マクロの利用
 
-* マクロを呼び出す時は、名前の後に `!` をつけます
-* `format` や `println` はマクロです
+* マクロを利用する時は、名前の後に `!` をつけます
+* 下記の例にある `format` や `println` はマクロです
+* なお `!` をつけない場合、関数呼び出しとして解釈されます
 
 ~~~rust
 fn main(){
@@ -237,7 +258,19 @@ let another_string = slice_of_message.to_string();
 println!("{}", another_string);
 ~~~
 
-#### より詳しくコンパイルエラーについて知りたい場合は
+#### スライス から String への変換（つづき）
+
+* `format` マクロを使って変換する場合も多く見られます
+* スライスである文字列リテラルを変換する場合にも多用されます
+
+~~~rust
+let a_str = "Hello, world!";
+let converted_string = format!("{}", a_str);
+
+let a_string = format!("Hello, world!");
+~~~
+
+### より詳しくコンパイルエラーについて知りたい場合は
 
 * rustc に --explain オプションをつけて実行すると、より詳しい解説を読めます
 z* 次の例では、E0308 のエラーについて、解説を読みます
@@ -250,27 +283,10 @@ Expected type did not match the received type.
 Erroneous code examples:
 ~~~
 
-#### コンパイルエラーの修正方法
+### コンパイルエラーの修正方法
 
-* if 節の評価値の型が String となるように修正します
-* `to_string` メソッドを呼ぶことで、String 型の `"FizzBuzz"` を作成できます
-
-~~~rust
-fn main() {
-  for n in 0..10{
-    let output = if n % 15 == 0{
-      "FizzBuzz".to_string()
-    }else{
-      format!("{}", n)
-    };
-    println!("{}", output);
-  }
-}
-~~~
-
-#### 別のコンパイルエラーの修正方法
-
-* `format` マクロは、プレースホルダーなしでも利用できます
+* if 節の評価値の型が `String` となるように修正します
+* スライスを `String` 型に変換することで、if 節のエラーが修正できます
 
 ~~~rust
 fn main() {
@@ -311,11 +327,11 @@ fn main() {
 fn main() {
   for n in 1..20{
     let output = if n % 15 == 0{
-      "FizzBuzz".to_string()
+      format!("FizzBuzz")
     }else if n % 5 == 0{
-      "Buzz".to_string()
+      format!("Buzz")
     }else if n % 3 == 0{
-      "Fizz".to_string()
+      format!("Fizz")
     }else{
       format!("{}", n)
     };
@@ -348,7 +364,8 @@ fn fizzbuzz(n: u32) -> String{
 #### 関数呼び出し
 
 * 実引き数をを与えて関数を呼びます
-* 型を明記していないのは、コンパイラーが型推論を行うためです
+* 下記の例では、`output` や `n` に型が明記されていません
+* これはコンパイラーが型推論を行うためです
 
 ~~~rust
 fn main() {
@@ -385,8 +402,8 @@ fn main() {
 ### FizzBuzz：関数プログラミング的なアプローチ
 
 * FizzBuzz はデータ変換を行う関数として捉えることもできます
-* 例：数値の範囲 -> 文字列の配列
-* 一つ一つの数値を、文字列に変換する関数は fizzbuzz として用意されています
+* 例：数値の範囲 -> 文字列
+* 一つ一つの数値を、文字列に変換する関数は `fizzbuzz` として用意されています
 * これを使って、関数プログラミング的なアプローチで FizzBuzz を書き直します
 
 #### FizzBuzz: map メソッド
@@ -413,7 +430,7 @@ fn main() {
 ~~~rust
 fn main() {
   let output = (1..20).map(fizzbuzz)
-      .fold("".to_string(), |accum, line|{
+      .fold(format!(""), |accum, line|{
     format!("{}\n{}", accum, line)
   });
   println!("{}", output);
@@ -436,7 +453,7 @@ fn fizzbuzz(n: u32) -> String{
 }
 
 fn main() {
-  let output = (1..20).map(fizzbuzz).fold("".to_string(), |accum, line|{
+  let output = (1..20).map(fizzbuzz).fold(format!(""), |accum, line|{
     format!("{}\n{}", accum, line)
   });
   println!("{}", output);
