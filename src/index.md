@@ -350,11 +350,11 @@ fn main() {
 ~~~rust
 fn fizzbuzz(n: u32) -> String{
   if n % 15 == 0{
-    "FizzBuzz".to_string()
+    format!("FizzBuzz")
   }else if n % 5 == 0{
-    "Buzz".to_string()
+    format!("Buzz")
   }else if n % 3 == 0{
-    "Fizz".to_string()
+    format!("Fizz")
   }else{
     format!("{}", n)
   }
@@ -381,11 +381,11 @@ fn main() {
 ~~~rust
 fn fizzbuzz(n: u32) -> String{
   if n % 15 == 0{
-    "FizzBuzz".to_string()
+    format!("FizzBuzz")
   }else if n % 5 == 0{
-    "Buzz".to_string()
+    format!("Buzz")
   }else if n % 3 == 0{
-    "Fizz".to_string()
+    format!("Fizz")
   }else{
     format!("{}", n)
   }
@@ -442,11 +442,11 @@ fn main() {
 ~~~rust
 fn fizzbuzz(n: u32) -> String{
   if n % 15 == 0{
-    "FizzBuzz".to_string()
+    format!("FizzBuzz")
   }else if n % 5 == 0{
-    "Buzz".to_string()
+    format!("Buzz")
   }else if n % 3 == 0{
-    "Fizz".to_string()
+    format!("Fizz")
   }else{
     format!("{}", n)
   }
@@ -469,7 +469,7 @@ fn main() {
 ~~~rust
 #[test]
 fn test_fizzbuzz_returns_fizzbuzz() {
-    let expected = "FizzBuzz".to_string();
+    let expected = format!("FizzBuzz");
     let actual = fizzbuzz(15);
     assert_eq!(expected, actual);
 }
@@ -484,7 +484,7 @@ fn test_fizzbuzz_returns_fizzbuzz() {
 ~~~rust
 #[test]
 fn test_fizzbuzz_returns_fizzbuzz() {
-    let expected = "FizzBuzz".to_string();
+    let expected = format!("FizzBuzz");
     let actual = fizzbuzz(15);
     assert_eq!(expected, actual);
 }
@@ -513,21 +513,21 @@ test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; fini
 ~~~rust
 #[test]
 fn test_fizzbuzz_returns_fizzbuzz() {
-  let expected = "FizzBuzz".to_string();
+  let expected = format!("FizzBuzz");
   let actual = fizzbuzz(15);
   assert_eq!(expected, actual);
 }
 
 #[test]
 fn test_fizzbuzz_returns_fizz() {
-  let expected = "Fizz".to_string();
+  let expected = format!("Fizz");
   let actual = fizzbuzz(6);
   assert_eq!(expected, actual);
 }
 
 #[test]
 fn test_fizzbuzz_returns_buzz() {
-  let expected = "Buzz".to_string();
+  let expected = format!("Buzz");
   let actual = fizzbuzz(10);
   assert_eq!(expected, actual);
 }
@@ -620,7 +620,7 @@ fn main() {
   let message = if result.is_ok(){
     format!("Result = {}", result.unwrap())
   }else{
-    "Fail".to_string()
+    format!("Fail")
   };
   println!("{}", message);
 }
@@ -637,9 +637,50 @@ fn main() {
   let result: Result<u32, String> = Ok(1);
   let message = match result {
     Ok(value) => format!("Result = {}", value),
-    Err(_) => "Fail".to_string()
+    Err(_) => format!("Fail")
   };
   println!("{}", message);
+}
+~~~
+
+#### 成果物の取り出し方（`if let` を使う場合）
+
+* [`if let`](https://doc.rust-lang.org/book/ch06-03-if-let.html) という構文でも、成果物を取得できます
+* ある処理が成功した場合にのみ続きを実行したい、という時によく使われます
+
+~~~rust
+fn main() {
+  let result: Result<u32, String> = Ok(1);
+  if let Ok(value) = result {
+    println!("Result = {}", value);
+  }
+}
+~~~
+
+#### `?` 演算子を利用したアーリーリターン
+
+* その場でエラーを返して関数から脱出することはよくあります
+* `?` 演算子を利用することで、アーリーリターンをシンプルに記述できます
+* 次の例では `main` 関数でアーリーリターンしています（[Playground で試す](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=784df386bb701fc496a0033dc0f1670b)）
+* これにあわせて `main` 関数に返り値を設定しています
+
+~~~rust
+fn accept_only_even_number(value: u32) -> Result<u32, String>{
+  if value % 2 == 0{
+    Ok(value)
+  }else{
+    Err(format!("Odd number is given"))
+  }
+}
+
+fn main() -> Result<(), String>{
+  let value = accept_only_even_number(2)?;
+  println!("Result = {}", value);
+
+  let value = accept_only_even_number(3)?;
+  println!("Result = {}", value);
+  
+  Ok(())
 }
 ~~~
 
@@ -668,7 +709,7 @@ fn run(path: String){
 }
 
 fn main() {
-  let path = "./src/main.rs".to_string();
+  let path = format!("./src/main.rs");
   run(path);
 }
 ~~~
@@ -737,7 +778,7 @@ fn main() {
 
 * Some は、実際の値を内部に保持しています
 * Option は Result と同様に、`unwrap` メソッドを持っています
-* また下記のようにパターンマッチを利用しても、保持されている値を取得できます
+* またパターンマッチや、`if let`、`?` 演算子も利用できます
 
 ~~~rust
 fn main() {
