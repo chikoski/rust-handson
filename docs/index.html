@@ -96,6 +96,14 @@
 <li>gist 上のコードを読み込ませることもできます：<a href="https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2018&amp;gist=25c84918885d514bc073a7a494c95fdc">例</a> / <a href="https://gist.github.com/chikoski/25c84918885d514bc073a7a494c95fdc">gist</a></li>
 </ul>
 </section>
+<section>
+<h4>Rust Search Extenstion</h4>
+<ul>
+<li>Rust のドキュメント検索が楽になるブラウザ拡張</li>
+<li><code>rs キーワード</code> と URL バーに入力すると、適切な文書を表示します</li>
+<li><a href="https://rust.extension.sh/">Web サイト</a></li>
+</ul>
+</section>
 </section>
 <section>
 <h2>FizzBuzz を作ろう</h2>
@@ -397,19 +405,26 @@ z* 次の例では、E0308 のエラーについて、解説を読みます</li>
 <h3>ファイル読み込みには失敗がつきもの</h3>
 <ul>
 <li>Rust では、ある操作の成否を <a href="https://doc.rust-lang.org/std/result/enum.Result.html"><code>Result</code></a> を使って表現します</li>
-<li><code>Result</code> は成功を表す <code>Ok</code> と エラーを表す <code>Err</code> から成る enum です</li>
-<li><code>is_ok</code> メソッドで、<code>Ok</code> か <code>Err</code> かを判別できます</li>
+<li><code>Result</code> は <code>Ok</code> もしくは <code>Err</code> を値に持つ列挙型です</li>
+<li><code>Ok</code> か <code>Err</code> かは、<code>is_ok</code> メソッドで判別できます</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">fn</span> <span class="token function-definition function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span><br>  <span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span><br>  <span class="token keyword">let</span> message <span class="token operator">=</span> <span class="token keyword">if</span> result<span class="token punctuation">.</span><span class="token function">is_ok</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span><br>    <span class="token string">"Success"</span><br>  <span class="token punctuation">}</span><span class="token keyword">else</span><span class="token punctuation">{</span><br>    <span class="token string">"Fail"</span><br>  <span class="token punctuation">}</span><span class="token punctuation">;</span><br>  <span class="token macro property">println!</span><span class="token punctuation">(</span><span class="token string">"{}"</span><span class="token punctuation">,</span> message<span class="token punctuation">)</span><span class="token punctuation">;</span><br><span class="token punctuation">}</span></code></pre>
 </section>
 <section>
-<h4>成果物とエラーの理由</h4>
+<h4><code>Result&lt;T, E&gt;</code></h4>
 <ul>
-<li><code>Ok</code> は成果物を値として持てます。</li>
-<li>同様に <code>Err</code> も、エラーの理由を値として持てます</li>
-<li>成果物やエラーの理由の表現は、プログラムによって異なります</li>
-<li>そのため成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します</li>
-<li>次の例では、成果物は <code>u32</code> であり、エラーの理由は <code>String</code> で表現されます</li>
+<li><a href="https://doc.rust-lang.org/std/result/enum.Result.html"><code>Result</code></a> は <code>Ok</code> と <code>Err</code> を値に持つ<a href="https://doc.rust-lang.org/std/keyword.enum.html">列挙型</a>です</li>
+<li><code>Ok</code> は処理の成果物を、<code>Err</code> はエラー値を内部に持っています</li>
+<li>成果物 / エラー値の型は<a href="https://doc.rust-lang.org/book/ch10-01-syntax.html">自由に変えられる</a>ようになっています</li>
+</ul>
+<pre class="language-rust"><code class="language-rust"><span class="token keyword">enum</span> <span class="token type-definition class-name">Result</span><span class="token operator">&lt;</span><span class="token class-name">T</span><span class="token punctuation">,</span> <span class="token class-name">E</span><span class="token operator">></span> <span class="token punctuation">{</span><br>   <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token class-name">T</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br>   <span class="token class-name">Err</span><span class="token punctuation">(</span><span class="token class-name">E</span><span class="token punctuation">)</span><span class="token punctuation">,</span><br><span class="token punctuation">}</span></code></pre>
+</section>
+<section>
+<h4>成果物 / エラーの型の指定</h4>
+<ul>
+<li>成果物やエラーの表現は、プログラムによって異なります</li>
+<li>そのため成果物のデータ型とエラーを表すデータ型もあわせて指定します</li>
+<li>次の例では、成果物は <code>u32</code> であり、エラーは <code>String</code> で表現されます</li>
 </ul>
 <pre class="language-rust"><code class="language-rust"><span class="token keyword">let</span> result<span class="token punctuation">:</span> <span class="token class-name">Result</span><span class="token operator">&lt;</span><span class="token keyword">u32</span><span class="token punctuation">,</span> <span class="token class-name">String</span><span class="token operator">></span> <span class="token operator">=</span> <span class="token class-name">Ok</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span></code></pre>
 </section>

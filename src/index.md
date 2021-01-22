@@ -69,6 +69,12 @@ edition = "2018"
 * オンラインで Rust の挙動を確認できます
 * gist 上のコードを読み込ませることもできます：[例](https://play.rust-lang.org/?version=stable&mode=debug&edition=2018&gist=25c84918885d514bc073a7a494c95fdc) / [gist](https://gist.github.com/chikoski/25c84918885d514bc073a7a494c95fdc)
 
+#### Rust Search Extenstion
+
+* Rust のドキュメント検索が楽になるブラウザ拡張
+* `rs キーワード` と URL バーに入力すると、適切な文書を表示します
+* [Web サイト](https://rust.extension.sh/)
+
 ## FizzBuzz を作ろう
 
 * 1 から 100 までの数値を出力します
@@ -582,8 +588,8 @@ fn main() {
 ### ファイル読み込みには失敗がつきもの
 
 * Rust では、ある操作の成否を [`Result`](https://doc.rust-lang.org/std/result/enum.Result.html) を使って表現します
-* `Result` は成功を表す `Ok` と エラーを表す `Err` から成る enum です
-* `is_ok` メソッドで、`Ok` か `Err` かを判別できます
+* `Result` は `Ok` もしくは `Err` を値に持つ列挙型です
+* `Ok` か `Err` かは、`is_ok` メソッドで判別できます
 
 ~~~rust
 fn main() {
@@ -597,13 +603,24 @@ fn main() {
 }
 ~~~
 
-#### 成果物とエラーの理由
+#### `Result<T, E>`
 
-* `Ok` は成果物を値として持てます。
-* 同様に `Err` も、エラーの理由を値として持てます
-* 成果物やエラーの理由の表現は、プログラムによって異なります
-* そのため成果物のデータ型とエラーの理由を表すデータ型もあわせて指定します
-* 次の例では、成果物は `u32` であり、エラーの理由は `String` で表現されます
+* [`Result`](https://doc.rust-lang.org/std/result/enum.Result.html) は `Ok` と `Err` を値に持つ[列挙型](https://doc.rust-lang.org/std/keyword.enum.html)です
+* `Ok` は処理の成果物を、`Err` はエラー値を内部に持っています
+* 成果物 / エラー値の型は[自由に変えられる](https://doc.rust-lang.org/book/ch10-01-syntax.html)ようになっています
+
+~~~rust
+enum Result<T, E> {
+   Ok(T),
+   Err(E),
+}
+~~~
+
+#### 成果物 / エラーの型の指定
+
+* 成果物やエラーの表現は、プログラムによって異なります
+* そのため成果物のデータ型とエラーを表すデータ型もあわせて指定します
+* 次の例では、成果物は `u32` であり、エラーは `String` で表現されます
 
 ~~~rust
 let result: Result<u32, String> = Ok(1);
