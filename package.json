@@ -11,8 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@11ty/eleventy": "^0.11.1",
-    "@11ty/eleventy-plugin-syntaxhighlight": "^3.0.6",
-    "markdown-it-header-sections": "^1.0.0"
+    "@11ty/eleventy-plugin-syntaxhighlight": "^3.0.6"
   },
   "scripts": {
     "build": "npx @11ty/eleventy --input ./src --output ./docs",
