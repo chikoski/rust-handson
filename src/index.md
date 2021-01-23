@@ -868,7 +868,7 @@ fn main() {
   let pattern = std::env::args().nth(1);
   let path = std::env::args().nth(2);
   if pattern.is_some() && path.is_some(){
-    run(path, pattern);
+    run(path.unwrap(), pattern.unwrap());
   }
 }
 ~~~
